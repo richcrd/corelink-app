@@ -9,7 +9,10 @@ export type User = {
 };
 
 export function getUserDisplayName(user: User | null | undefined): string {
-  if (!user) return 'Invitado';
-  const fullName = [user.firstName, user.lastName].filter(Boolean).join(' ').trim();
-  return fullName || user.username || 'Invitado';
+  if (!user) return "Invitado";
+  const fullName = [user.firstName, user.lastName]
+    .filter(Boolean)
+    .join(" ")
+    .trim();
+  return fullName || user.username || "Invitado";
 }

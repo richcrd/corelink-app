@@ -10,8 +10,6 @@ import 'react-native-reanimated';
 import { useColorScheme } from '@/src/presentation/hooks/useColorScheme';
 import { ToastViewport } from '@/src/presentation/feedback/ToastViewport';
 import { useAuthStore } from '@/src/presentation/stores/authStore';
-import { installHttpLogger } from '@/src/infrastructure/http/httpLogger';
-import { DependenciesProvider } from '@/src/presentation/di/DependenciesProvider';
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -45,10 +43,6 @@ export default function RootLayout() {
   }, [hydrate]);
 
   useEffect(() => {
-    return installHttpLogger();
-  }, []);
-
-  useEffect(() => {
     if (loaded && hasHydrated) {
       SplashScreen.hideAsync();
     }
@@ -65,14 +59,12 @@ function RootLayoutNav() {
   const colorScheme = useColorScheme();
 
   return (
-    <DependenciesProvider>
-      <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-        <AuthRedirect />
-        <Stack screenOptions={{ headerShown: false }}>
-        </Stack>
-        <ToastViewport />
-      </ThemeProvider>
-    </DependenciesProvider>
+    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+      <AuthRedirect />
+      <Stack screenOptions={{ headerShown: false }}>
+      </Stack>
+      <ToastViewport />
+    </ThemeProvider>
   );
 }
 

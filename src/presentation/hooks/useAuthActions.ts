@@ -1,20 +1,17 @@
-import type { LoginCredentials, RegisterBody } from '@/src/domain/repositories/AuthRepository';
-import { loginUseCase } from '@/src/application/usecases/auth/login';
-import { registerUseCase } from '@/src/application/usecases/auth/register';
+import type { LoginCredentials, RegisterBody } from '@/src/services/authService';
+import { login, register } from '@/src/services/authService';
 import { useAuthStore } from '@/src/presentation/stores/authStore';
-import { useDependencies } from '@/src/presentation/di/DependenciesProvider';
 
 export function useAuthActions() {
   const setSession = useAuthStore((s) => s.setSession);
-  const authRepository = useDependencies().authRepository;
 
   return {
     login: async (credentials: LoginCredentials) => {
-      const session = await loginUseCase(authRepository, credentials);
+      const session = await login(credentials);
       await setSession(session);
     },
     register: async (body: RegisterBody) => {
-      const session = await registerUseCase(authRepository, body);
+      const session = await register(body);
       await setSession(session);
     },
   };

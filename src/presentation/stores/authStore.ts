@@ -1,21 +1,8 @@
 import { create } from "zustand";
-
-import type { User } from "@/src/domain/entities/User";
-import type { AuthSession } from "@/src/domain/repositories/AuthRepository";
-import {
-  setApiAuthToken,
-  setApiUnauthorizedHandler,
-} from "@/src/infrastructure/http/authRuntime";
-import {
-  secureGetJson,
-  secureRemove,
-  secureSetJson,
-} from "@/src/infrastructure/storage/secureJson";
-
-const STORAGE_KEYS = {
-  token: "corelink.jwt",
-  user: "corelink.user",
-} as const;
+import type { User } from "@/src/models/User";
+import type { AuthSession } from "@/src/services/authService";
+import { secureStore } from "@/src/storage/secureJson";
+import { STORAGE_KEYS } from "@/src/storage/storageKeys";
 
 type AuthStatus = "hydrating" | "authenticated" | "unauthenticated";
 
@@ -29,76 +16,58 @@ type AuthStore = {
   logout: () => Promise<void>;
 };
 
-export const useAuthStore = create<AuthStore>((set, get) => ({
+export const useAuthStore = create<AuthStore>((set) => ({
   hasHydrated: false,
   status: "hydrating",
   token: null,
   user: null,
 
-  hydrate: async () => {
-    try {
-      set({ status: "hydrating" });
-      const [token, user] = await Promise.all([
-        secureGetJson<string>(STORAGE_KEYS.token),
-        secureGetJson<User>(STORAGE_KEYS.user),
-      ]);
+  async hydrate() {
+    const [token, user] = await Promise.all([
+      secureStore.get<string>(STORAGE_KEYS.auth.token),
+      secureStore.get<User>(STORAGE_KEYS.auth.user),
+    ]);
 
-      if (token) {
-        setApiAuthToken(token);
-        setApiUnauthorizedHandler(() => {
-          // Avoid awaiting inside handler; fire-and-forget.
-          get().logout();
-        });
-        set({
-          token,
-          user: user ?? null,
-          status: "authenticated",
-          hasHydrated: true,
-        });
-        return;
-      }
-
-      setApiAuthToken(null);
-      set({
-        token: null,
-        user: null,
-        status: "unauthenticated",
-        hasHydrated: true,
-      });
-    } catch {
-      setApiAuthToken(null);
-      set({
+    if (!token || !user) {
+      return set({
         token: null,
         user: null,
         status: "unauthenticated",
         hasHydrated: true,
       });
     }
-  },
 
-  setSession: async (session) => {
-    await Promise.all([
-      secureSetJson(STORAGE_KEYS.token, session.token),
-      secureSetJson(STORAGE_KEYS.user, session.user),
-    ]);
-    setApiAuthToken(session.token);
-    setApiUnauthorizedHandler(() => {
-      get().logout();
+    set({
+      token,
+      user,
+      status: "authenticated",
+      hasHydrated: true,
     });
-    set({ token: session.token, user: session.user, status: "authenticated" });
   },
 
-  logout: async () => {
-    const { token } = get();
-    if (token) {
-      // No endpoint specified for logout; local cleanup is enough for now.
-    }
+  async setSession(session) {
     await Promise.all([
-      secureRemove(STORAGE_KEYS.token),
-      secureRemove(STORAGE_KEYS.user),
+      secureStore.set(STORAGE_KEYS.auth.token, session.token),
+      secureStore.set(STORAGE_KEYS.auth.user, session.user),
     ]);
-    setApiAuthToken(null);
-    setApiUnauthorizedHandler(null);
-    set({ token: null, user: null, status: "unauthenticated" });
+
+    set({
+      token: session.token,
+      user: session.user,
+      status: "authenticated",
+    });
+  },
+
+  async logout() {
+    await Promise.all([
+      secureStore.remove(STORAGE_KEYS.auth.token),
+      secureStore.remove(STORAGE_KEYS.auth.user),
+    ]);
+
+    set({
+      token: null,
+      user: null,
+      status: "unauthenticated",
+    });
   },
 }));

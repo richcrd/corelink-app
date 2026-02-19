@@ -13,16 +13,15 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { getCatalogUseCase } from '@/src/application/usecases/catalog/getCatalog';
+import { getCatalog } from '@/src/services/catalogService';
 import Colors from '@/src/presentation/constants/Colors';
 import { useColorScheme } from '@/src/presentation/hooks/useColorScheme';
 import { useCartStore } from '@/src/presentation/stores/cartStore';
 import { useAuthStore } from '@/src/presentation/stores/authStore';
 import { useUiStore } from '@/src/presentation/stores/uiStore';
-import { useDependencies } from '@/src/presentation/di/DependenciesProvider';
 
-import type { Category } from '@/src/domain/entities/Category';
-import type { Product } from '@/src/domain/entities/Product';
+import type { Category } from '@/src/models/Category';
+import type { Product } from '@/src/models/Product';
 
 
 const BANNER_IMAGE =
@@ -62,8 +61,6 @@ export default function HomeScreen() {
 
   const showToast = useUiStore((s) => s.showToast);
 
-  const catalogRepository = useDependencies().catalogRepository;
-
   const [categories, setCategories] = useState<Category[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
   const [activeCategoryId, setActiveCategoryId] = useState<string | null>(null);
@@ -73,12 +70,12 @@ export default function HomeScreen() {
 
   useEffect(() => {
     (async () => {
-      const data = await getCatalogUseCase(catalogRepository);
+      const data = await getCatalog();
       setCategories(data.categories);
       setProducts(data.products);
       setActiveCategoryId(data.categories[0]?.id ?? null);
     })();
-  }, [catalogRepository]);
+  }, []);
 
   const visibleProducts = useMemo(() => {
     if (!activeCategoryId) return products;

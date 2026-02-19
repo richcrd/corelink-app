@@ -2,7 +2,7 @@ import { StyleSheet, Text, View } from "react-native";
 
 import Colors from "@/src/presentation/constants/Colors";
 import { useColorScheme } from "@/src/presentation/hooks/useColorScheme";
-import { getUserDisplayName } from "@/src/domain/entities/User";
+import { getUserDisplayName } from "@/src/models/User";
 import { useAuthStore } from "@/src/presentation/stores/authStore";
 
 export function HeaderUser() {

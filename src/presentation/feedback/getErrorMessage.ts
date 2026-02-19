@@ -1,10 +1,13 @@
-import { ApiError } from '@/src/infrastructure/http/apiClient';
+import axios from "axios";
 
-export function getErrorMessage(error: unknown, fallback: string): string {
-  if (error instanceof ApiError) return error.message;
-  if (error && typeof error === 'object' && 'message' in error) {
-    const msg = (error as any).message;
-    if (typeof msg === 'string' && msg.trim().length > 0) return msg;
+export function getErrorMessage(error: unknown, fallback = "Unexpected error"): string {
+  if (axios.isAxiosError(error)) {
+    return error.response?.data?.message ?? error.message ?? fallback;
   }
+
+  if (error instanceof Error) {
+    return error.message;
+  }
+
   return fallback;
 }

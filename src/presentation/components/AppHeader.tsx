@@ -9,7 +9,7 @@ import { useUiStore } from '@/src/presentation/stores/uiStore';
 import { useAuthStore } from '@/src/presentation/stores/authStore';
 import { useCartStore } from '@/src/presentation/stores/cartStore';
 
-import { getUserDisplayName } from '@/src/domain/entities/User';
+import { getUserDisplayName } from '@/src/models/User';
 
 import { HeaderCartButton } from '@/src/presentation/components/HeaderCartButton';
 
