@@ -1,18 +1,18 @@
-let authToken: string | null = null;
-let unauthorizedHandler: (() => void) | null = null;
+let token: string | null = null;
+let onUnauthorized: (() => void) | null = null;
 
-export function setApiAuthToken(token: string | null): void {
-  authToken = token;
+export function setApiAuthToken(newToken: string | null): void {
+  token = newToken;
 }
 
 export function getApiAuthToken(): string | null {
-  return authToken;
+  return token;
 }
 
 export function setApiUnauthorizedHandler(handler: (() => void) | null): void {
-  unauthorizedHandler = handler;
+  onUnauthorized = handler;
 }
 
 export function notifyUnauthorized(): void {
-  unauthorizedHandler?.();
+  onUnauthorized?.();
 }
