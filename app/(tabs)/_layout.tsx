@@ -23,14 +23,31 @@ export default function TabLayout() {
         tabBarActiveTintColor: theme.tint,
         tabBarInactiveTintColor: theme.tabIconDefault,
         tabBarStyle: { borderTopColor: theme.border, backgroundColor: theme.card },
-        header: () => <AppHeader />,
       }}>
       <Tabs.Screen
         name="index"
         options={{
           title: 'Inicio',
-          tabBarStyle: { display: 'none' },
-          tabBarIcon: ({ color }) => <TabBarIcon name="shopping-basket" color={color} />,
+          tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} />,
+          header: () => <AppHeader showSearch showCart />,
+        }}
+      />
+
+      <Tabs.Screen
+        name="sections"
+        options={{
+          title: 'Pasillos',
+          tabBarIcon: ({ color }) => <TabBarIcon name="th-large" color={color} />,
+          header: () => <AppHeader showSearch={false} showCart />,
+        }}
+      />
+
+      <Tabs.Screen
+        name="profile"
+        options={{
+          title: 'Perfil',
+          tabBarIcon: ({ color }) => <TabBarIcon name="user" color={color} />,
+          header: () => <AppHeader showSearch={false} showCart={false} />,
         }}
       />
     </Tabs>

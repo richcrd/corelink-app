@@ -1,8 +1,8 @@
 import { create } from "zustand";
 import type { User } from "@/src/models/User";
-import type { AuthSession } from "@/src/services/authService";
-import { secureStore } from "@/src/storage/secureJson";
-import { STORAGE_KEYS } from "@/src/storage/storageKeys";
+import type { AuthSession } from "../types/auth";
+import { secureStore } from "@/src/shared/storage/secureJson";
+import { STORAGE_KEYS } from "@/src/shared/storage/storageKeys";
 
 type AuthStatus = "hydrating" | "authenticated" | "unauthenticated";
 

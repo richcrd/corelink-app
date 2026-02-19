@@ -9,7 +9,7 @@ import 'react-native-reanimated';
 
 import { useColorScheme } from '@/src/presentation/hooks/useColorScheme';
 import { ToastViewport } from '@/src/presentation/feedback/ToastViewport';
-import { useAuthStore } from '@/src/presentation/stores/authStore';
+import { useAuthStore } from '@/src/features/auth/store/auth.store';
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -18,7 +18,7 @@ export {
 
 export const unstable_settings = {
   // Ensure that reloading on `/modal` keeps a back button present.
-  initialRouteName: '(public)',
+  initialRouteName: '(tabs)',
 };
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
@@ -74,17 +74,34 @@ function AuthRedirect() {
   const status = useAuthStore((s) => s.status);
   const hasHydrated = useAuthStore((s) => s.hasHydrated);
 
+  const protectedTabs = new Set<string>([
+    // 'profile'
+  ]);
+
   useEffect(() => {
     if (!hasHydrated) return;
-    const inPublicGroup = segments[0] === '(public)';
+    const group = segments[0];
+    const route = segments[1];
 
-    if (status !== 'authenticated' && !inPublicGroup) {
-      router.replace('/(public)/login');
-      return;
-    }
+    const inPublicGroup = group === '(public)';
+    const inTabsGroup = group === '(tabs)';
+    const isAuthScreen = inPublicGroup && (route === 'login' || route === 'register');
 
     if (status === 'authenticated' && inPublicGroup) {
       router.replace('/(tabs)');
+      return;
+    }
+
+    if (status !== 'authenticated' && inPublicGroup && !isAuthScreen) {
+      router.replace('/(tabs)');
+      return;
+    }
+
+    if (status !== 'authenticated' && inTabsGroup) {
+      const tabRoute = route ?? 'index';
+      if (protectedTabs.has(tabRoute)) {
+        router.replace('/(public)/login');
+      }
     }
   }, [hasHydrated, router, segments, status]);
 

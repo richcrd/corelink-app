@@ -1,8 +1,8 @@
 import { create } from 'zustand';
 
-import type { Product } from '@/src/models/Product';
-import type { CartItem } from '@/src/models/Cart';
-import { getCartItemsCount, getCartTotal } from '@/src/models/Cart';
+import type { Product } from '@/src/features/cart/types/Product';
+import { CartItem } from '../types/Cart';
+import { getCartItemsCount, getCartTotal } from '../types/Cart';
 
 type CartStore = {
   items: CartItem[];

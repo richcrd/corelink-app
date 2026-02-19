@@ -3,15 +3,17 @@ import { Pressable, StyleSheet, Text, View } from "react-native";
 
 import Colors from "@/src/presentation/constants/Colors";
 import { useColorScheme } from "@/src/presentation/hooks/useColorScheme";
-import { useCartStore } from "@/src/presentation/stores/cartStore";
-import { useUiStore } from "@/src/presentation/stores/uiStore";
+import { useCartStore } from "@/src/features/cart/store/cartStore";
+import { useUiStore } from "../stores/ui.store";
 
 export function HeaderCartButton({
   onPress,
   countOverride,
+  variant = "default",
 }: {
   onPress?: () => void;
   countOverride?: number;
+  variant?: "default" | "onPrimary";
 }) {
   const colorScheme = useColorScheme();
   const theme = Colors[colorScheme ?? "light"];
@@ -24,15 +26,26 @@ export function HeaderCartButton({
     showToast("Carrito próximamente", "info");
   }
 
+  const isDark = colorScheme === "dark";
+
+  const iconColor =
+    variant === "onPrimary" ? (isDark ? theme.background : theme.textOnPrimary) : theme.text;
+
+  const badgeBackgroundColor =
+    variant === "onPrimary" ? (isDark ? theme.background : theme.card) : theme.primary;
+
+  const badgeTextColor =
+    variant === "onPrimary" ? (isDark ? theme.textOnPrimary : theme.primary) : theme.textOnPrimary;
+
   return (
     <Pressable
       onPress={handlePress}
       style={({ pressed }) => [styles.button, { opacity: pressed ? 0.6 : 1 }]}
     >
-      <FontAwesome name="shopping-cart" size={22} color={theme.text} />
+      <FontAwesome name="shopping-cart" size={22} color={iconColor} />
       {count > 0 ? (
-        <View style={[styles.badge, { backgroundColor: theme.primary }]}>
-          <Text style={[styles.badgeText, { color: theme.textOnPrimary }]}>
+        <View style={[styles.badge, { backgroundColor: badgeBackgroundColor }]}>
+          <Text style={[styles.badgeText, { color: badgeTextColor }]}>
             {count}
           </Text>
         </View>

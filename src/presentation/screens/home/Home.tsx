@@ -1,6 +1,6 @@
 import Feather from '@expo/vector-icons/Feather';
-import { useRouter, useSegments } from 'expo-router';
-import { useEffect, useMemo, useState, type ReactNode } from 'react';
+import { useRouter } from 'expo-router';
+import { useEffect, useMemo, useState } from 'react';
 import {
   FlatList,
   Image,
@@ -13,15 +13,15 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { getCatalog } from '@/src/services/catalogService';
+import { getCatalog } from '@/src/features/cart/services/catalogService';
 import Colors from '@/src/presentation/constants/Colors';
 import { useColorScheme } from '@/src/presentation/hooks/useColorScheme';
-import { useCartStore } from '@/src/presentation/stores/cartStore';
-import { useAuthStore } from '@/src/presentation/stores/authStore';
-import { useUiStore } from '@/src/presentation/stores/uiStore';
+import { useCartStore } from '@/src/features/cart/store/cartStore';
+import { useAuthStore } from '@/src/features/auth/store/auth.store';
+import { useUiStore } from '../../stores/ui.store';
 
-import type { Category } from '@/src/models/Category';
-import type { Product } from '@/src/models/Product';
+import type { Category } from '@/src/features/cart/types/Category';
+import type { Product } from '@/src/features/cart/types/Product';
 
 
 const BANNER_IMAGE =
@@ -49,7 +49,6 @@ function money(amount: number) {
 export default function HomeScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
-  const segments = useSegments();
 
   const colorScheme = useColorScheme();
   const theme = Colors[colorScheme ?? 'light'];
@@ -57,7 +56,6 @@ export default function HomeScreen() {
   const status = useAuthStore((s) => s.status);
 
   const add = useCartStore((s) => s.add);
-  const cartCount = useCartStore((s) => s.totalItems());
 
   const showToast = useUiStore((s) => s.showToast);
 
@@ -65,7 +63,6 @@ export default function HomeScreen() {
   const [products, setProducts] = useState<Product[]>([]);
   const [activeCategoryId, setActiveCategoryId] = useState<string | null>(null);
 
-  const inTabsGroup = segments[0] === '(tabs)';
   const isAuthenticated = status === 'authenticated';
 
   useEffect(() => {
@@ -92,15 +89,6 @@ export default function HomeScreen() {
     showToast(`Agregado: ${product.name}`, 'success');
   }
 
-  function onPressCart() {
-    if (!isAuthenticated) {
-      showToast('Inicia sesión para ver tu carrito', 'info');
-      router.push('/(public)/login');
-      return;
-    }
-    showToast('Carrito próximamente', 'info');
-  }
-
   function onPressComingSoon() {
     showToast('Próximamente', 'info');
   }
@@ -110,7 +98,7 @@ export default function HomeScreen() {
     >
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 110 + insets.bottom }}
+        contentContainerStyle={{ paddingBottom: 24 + insets.bottom }}
       >
         <View style={styles.bannerSection}>
           <ImageBackground
@@ -271,96 +259,7 @@ export default function HomeScreen() {
           </ScrollView>
         </View>
       </ScrollView>
-
-      <View
-        style={[
-          styles.bottomNav,
-          {
-            paddingBottom: Math.max(16, insets.bottom),
-            backgroundColor: theme.card,
-            borderTopColor: theme.border,
-          },
-        ]}
-      >
-        <NavItem
-          icon={<Feather name="home" size={22} color={theme.primary} />}
-          label="Inicio"
-          active
-          onPress={() => {
-            if (inTabsGroup) router.replace('/(tabs)');
-            else router.replace('/(public)');
-          }}
-          theme={theme}
-        />
-        <NavItem
-          icon={<Feather name="grid" size={22} color={theme.tabIconDefault} />}
-          label="Pasillos"
-          onPress={onPressComingSoon}
-          theme={theme}
-        />
-        <NavItem
-          icon={
-            <View style={{ position: 'relative' }}>
-              <Feather name="shopping-cart" size={22} color={theme.tabIconDefault} />
-              {cartCount > 0 ? (
-                <View style={[styles.cartBadge, { backgroundColor: theme.danger }]}
-                >
-                  <Text style={[styles.cartBadgeText, { color: theme.textOnPrimary }]}>
-                    {cartCount}
-                  </Text>
-                </View>
-              ) : null}
-            </View>
-          }
-          label="Carrito"
-          onPress={onPressCart}
-          theme={theme}
-        />
-        <NavItem
-          icon={<Feather name="heart" size={22} color={theme.tabIconDefault} />}
-          label="Favoritos"
-          onPress={onPressComingSoon}
-          theme={theme}
-        />
-        <NavItem
-          icon={<Feather name="user" size={22} color={theme.tabIconDefault} />}
-          label="Cuenta"
-          onPress={onPressComingSoon}
-          theme={theme}
-        />
-      </View>
     </View>
-  );
-}
-
-function NavItem({
-  icon,
-  label,
-  active,
-  onPress,
-  theme,
-}: {
-  icon: ReactNode;
-  label: string;
-  active?: boolean;
-  onPress: () => void;
-  theme: (typeof Colors)['light'];
-}) {
-  return (
-    <Pressable
-      onPress={onPress}
-      style={({ pressed }) => [styles.navItem, { opacity: pressed ? 0.75 : 1 }]}
-    >
-      {icon}
-      <Text
-        style={[
-          styles.navLabel,
-          { color: active ? theme.primary : theme.tabIconDefault },
-        ]}
-      >
-        {label}
-      </Text>
-    </Pressable>
   );
 }
 
@@ -544,40 +443,4 @@ const styles = StyleSheet.create({
     fontWeight: '800',
   },
 
-  bottomNav: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    bottom: 0,
-    borderTopWidth: 1,
-    paddingTop: 10,
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    paddingHorizontal: 8,
-  },
-  navItem: {
-    alignItems: 'center',
-    gap: 4,
-    width: 70,
-  },
-  navLabel: {
-    fontSize: 10,
-    fontWeight: '700',
-  },
-  cartBadge: {
-    position: 'absolute',
-    right: -8,
-    top: -6,
-    minWidth: 16,
-    height: 16,
-    borderRadius: 8,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: 4,
-  },
-  cartBadgeText: {
-    fontSize: 10,
-    fontWeight: '900',
-    lineHeight: 12,
-  },
 });

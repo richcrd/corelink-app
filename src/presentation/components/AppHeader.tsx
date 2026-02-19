@@ -1,37 +1,37 @@
 import Feather from '@expo/vector-icons/Feather';
-import { useRouter, useSegments } from 'expo-router';
+import { useSegments } from 'expo-router';
+import type { ReactNode } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import Colors from '@/src/presentation/constants/Colors';
 import { useColorScheme } from '@/src/presentation/hooks/useColorScheme';
-import { useUiStore } from '@/src/presentation/stores/uiStore';
-import { useAuthStore } from '@/src/presentation/stores/authStore';
-import { useCartStore } from '@/src/presentation/stores/cartStore';
+import { useUiStore } from '../stores/ui.store';
+import { useAuthStore } from '@/src/features/auth/store/auth.store';
+import { useCartStore } from '@/src/features/cart/store/cartStore';
 
-import { getUserDisplayName } from '@/src/models/User';
+import { getUserDisplayName } from '@/src/features/auth/types/user';
 
 import { HeaderCartButton } from '@/src/presentation/components/HeaderCartButton';
 
 export type AppHeaderProps = {
   showSearch?: boolean;
   showCart?: boolean;
+  rightSlot?: ReactNode;
 };
 
 function isIndexSegment(seg: string | undefined): boolean {
   return !seg || seg === 'index';
 }
 
-export function AppHeader({ showSearch, showCart }: AppHeaderProps) {
+export function AppHeader({ showSearch, showCart, rightSlot }: AppHeaderProps) {
   const insets = useSafeAreaInsets();
-  const router = useRouter();
   const segments = useSegments();
 
   const colorScheme = useColorScheme();
   const theme = Colors[colorScheme ?? 'light'];
 
   const status = useAuthStore((s) => s.status);
-  const logout = useAuthStore((s) => s.logout);
   const user = useAuthStore((s) => s.user);
   const isAuthenticated = status === 'authenticated';
   const displayName = getUserDisplayName(user);
@@ -41,43 +41,62 @@ export function AppHeader({ showSearch, showCart }: AppHeaderProps) {
 
   const group = segments[0];
   const route = segments[1];
+  const inTabs = group === '(tabs)';
 
   const isHome =
     (group === '(tabs)' && isIndexSegment(route)) ||
     (group === '(public)' && isIndexSegment(route));
 
-  const isAuthScreen = group === '(public)' && (route === 'login' || route === 'register');
-
   const effectiveShowSearch = showSearch ?? isHome;
-  const effectiveShowCart = showCart ?? false;
+  const effectiveShowCart = showCart ?? isHome;
 
-  async function onPressAuthAction() {
-    if (isAuthenticated) {
-      await logout();
-      showToast('Sesión cerrada', 'info');
-      router.replace('/(public)');
-      return;
-    }
-
-    if (!isAuthScreen) {
-      router.push('/(public)/login');
-    }
-  }
+  const title = isAuthenticated ? `Hola, ${displayName}!` : "Hola";
+  const subtitle = isAuthenticated
+    ? '¿Buscas algo hoy?'
+    : inTabs
+      ? 'Inicia sesión para continuar'
+      : '';
 
   return (
-    <View style={[styles.root, { backgroundColor: theme.primary, paddingTop: Math.max(16, insets.top + 8) }]}
+    <View
+      style={[
+        styles.root,
+        {
+          backgroundColor: theme.primary,
+          paddingTop: Math.max(16, insets.top + 8),
+          paddingBottom: effectiveShowSearch ? 16 : 10,
+        },
+      ]}
     >
-      <View style={styles.locationRow}>
-        <Feather name="user" size={16} color={theme.textOnPrimary} />
-        <Text style={[styles.locationText, { color: theme.textOnPrimary }]} numberOfLines={1}>
-          {displayName}
-        </Text>
+      <View style={[styles.topRow, { marginBottom: effectiveShowSearch ? 12 : 0 }]}>
+        <View style={styles.titleBlock}>
+          <View style={[styles.avatar, { backgroundColor: theme.primaryMuted }]}>
+            <Feather name="user" size={16} color={theme.text} />
+          </View>
+          <View style={{ flex: 1 }}>
+            <Text style={[styles.title, { color: theme.textOnPrimary }]} numberOfLines={1}>
+              {title}
+            </Text>
+            <Text style={[styles.subtitle, { color: theme.textOnPrimary }]} numberOfLines={1}>
+              {subtitle}
+            </Text>
+          </View>
+        </View>
+
         <View style={{ flex: 1 }} />
+
+        {rightSlot ? <View style={styles.rightSlot}>{rightSlot}</View> : null}
+
+        {effectiveShowCart ? (
+          <View style={[styles.actionPill, { backgroundColor: 'transparent' }]}>
+            <HeaderCartButton variant="onPrimary" countOverride={cartCount} />
+          </View>
+        ) : null}
       </View>
 
       {effectiveShowSearch ? (
         <Pressable
-          onPress={() => showToast('Búsqueda próximamente', 'info')}
+          onPress={() => showToast('Búsquedas próximamente', 'info')}
           style={({ pressed }) => [
             styles.searchContainer,
             {
@@ -88,57 +107,11 @@ export function AppHeader({ showSearch, showCart }: AppHeaderProps) {
         >
           <Feather name="search" size={18} color={theme.tabIconDefault} />
           <Text style={[styles.searchPlaceholder, { color: theme.tabIconDefault }]}>
-            Buscar frutas, verduras, carnes...
+            Buscar productos...
           </Text>
           <View style={{ flex: 1 }} />
-
-          {effectiveShowCart ? (
-            <HeaderCartButton countOverride={cartCount} />
-          ) : null}
-
-          {!isAuthScreen ? (
-            <Pressable
-              onPress={onPressAuthAction}
-              hitSlop={8}
-              style={({ pressed }) => [
-                styles.authPill,
-                {
-                  backgroundColor: theme.primaryMuted,
-                  opacity: pressed ? 0.85 : 1,
-                },
-              ]}
-            >
-              <Text style={[styles.authPillText, { color: theme.text }]}>
-                {isAuthenticated ? 'Salir' : 'Entrar'}
-              </Text>
-            </Pressable>
-          ) : null}
         </Pressable>
-      ) : (
-        <View style={styles.actionsRow}>
-          <View style={{ flex: 1 }} />
-          {effectiveShowCart ? (
-            <HeaderCartButton countOverride={cartCount} />
-          ) : null}
-          {!isAuthScreen ? (
-            <Pressable
-              onPress={onPressAuthAction}
-              hitSlop={8}
-              style={({ pressed }) => [
-                styles.authPill,
-                {
-                  backgroundColor: theme.primaryMuted,
-                  opacity: pressed ? 0.85 : 1,
-                },
-              ]}
-            >
-              <Text style={[styles.authPillText, { color: theme.text }]}>
-                {isAuthenticated ? 'Salir' : 'Entrar'}
-              </Text>
-            </Pressable>
-          ) : null}
-        </View>
-      )}
+      ) : null}
     </View>
   );
 }
@@ -146,20 +119,44 @@ export function AppHeader({ showSearch, showCart }: AppHeaderProps) {
 const styles = StyleSheet.create({
   root: {
     paddingHorizontal: 16,
-    paddingBottom: 16,
     borderBottomLeftRadius: 24,
     borderBottomRightRadius: 24,
   },
-  locationRow: {
+
+  topRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
-    marginBottom: 14,
   },
-  locationText: {
-    fontSize: 14,
-    fontWeight: '600',
+
+  titleBlock: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
     flexShrink: 1,
+  },
+  avatar: {
+    width: 32,
+    height: 32,
+    borderRadius: 999,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  title: {
+    fontSize: 14,
+    fontWeight: '900',
+  },
+  subtitle: {
+    marginTop: 2,
+    fontSize: 12,
+    fontWeight: '700',
+    opacity: 0.9,
+  },
+
+  rightSlot: {
+    marginRight: 10,
+  },
+  actionPill: {
+    borderRadius: 999,
   },
 
   searchContainer: {
@@ -173,21 +170,5 @@ const styles = StyleSheet.create({
   searchPlaceholder: {
     fontSize: 14,
     fontWeight: '600',
-  },
-
-  actionsRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10,
-  },
-
-  authPill: {
-    paddingVertical: 6,
-    paddingHorizontal: 10,
-    borderRadius: 999,
-  },
-  authPillText: {
-    fontSize: 12,
-    fontWeight: '800',
   },
 });

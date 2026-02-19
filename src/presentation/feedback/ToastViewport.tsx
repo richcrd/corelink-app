@@ -3,7 +3,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import Colors from "@/src/presentation/constants/Colors";
 import { useColorScheme } from "@/src/presentation/hooks/useColorScheme";
-import { useUiStore } from "@/src/presentation/stores/uiStore";
+import { useUiStore } from "../stores/ui.store";
 
 export function ToastViewport() {
   const toast = useUiStore((s) => s.toast);
@@ -15,7 +15,7 @@ export function ToastViewport() {
   const backgroundMap = {
     success: theme.success,
     error: theme.danger,
-    info: theme.card,
+    info: theme.info,
   };
 
   return (

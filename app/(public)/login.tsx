@@ -4,8 +4,8 @@ import { Pressable, StyleSheet, Text } from "react-native";
 
 import Colors from "@/src/presentation/constants/Colors";
 import { useColorScheme } from "@/src/presentation/hooks/useColorScheme";
-import { useAuthActions } from "@/src/presentation/hooks/useAuthActions";
-import { useUiStore } from "@/src/presentation/stores/uiStore";
+import { useAuth } from "@/src/features/auth/hooks/useAuth";
+import { useUiStore } from "@/src/presentation/stores/ui.store";
 import { getErrorMessage } from "@/src/presentation/feedback/getErrorMessage";
 import { AuthScreenLayout } from "@/src/presentation/screens/auth/components/AuthScreenLayout";
 import {
@@ -18,7 +18,7 @@ export default function LoginScreen() {
   const router = useRouter();
   const colorScheme = useColorScheme();
   const theme = Colors[colorScheme ?? "light"];
-  const { login } = useAuthActions();
+  const { login } = useAuth();
   const showToast = useUiStore((s) => s.showToast);
 
   const [username, setUsername] = useState("");

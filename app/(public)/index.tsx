@@ -1,1 +1,1 @@
-export { default } from '@/src/presentation/screens/Home';
+export { HomeScreen as default } from '@/src/presentation/screens';

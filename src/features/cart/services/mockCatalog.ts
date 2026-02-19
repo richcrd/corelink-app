@@ -1,5 +1,5 @@
-import type { Category } from "@/src/models/Category";
-import type { Product } from "@/src/models/Product";
+import type { Category } from "@/src/features/cart/types/Category";
+import type { Product } from "@/src/features/cart/types/Product";
 
 export const mockCategories: Category[] = [
   { id: "c1", name: "Frutas y Verduras" },

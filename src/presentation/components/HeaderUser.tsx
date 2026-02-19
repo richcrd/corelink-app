@@ -2,8 +2,8 @@ import { StyleSheet, Text, View } from "react-native";
 
 import Colors from "@/src/presentation/constants/Colors";
 import { useColorScheme } from "@/src/presentation/hooks/useColorScheme";
-import { getUserDisplayName } from "@/src/models/User";
-import { useAuthStore } from "@/src/presentation/stores/authStore";
+import { getUserDisplayName } from "@/src/features/auth/types/user";
+import { useAuthStore } from "@/src/features/auth/store/auth.store";
 
 export function HeaderUser() {
   const colorScheme = useColorScheme();
