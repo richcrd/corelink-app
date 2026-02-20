@@ -1,82 +1,21 @@
 import { useRouter } from "expo-router";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
-
-import Colors from "@/src/presentation/constants/Colors";
-import { useColorScheme } from "@/src/presentation/hooks/useColorScheme";
-import { useAuth } from "@/src/features/auth/hooks/useAuth";
-import { useUiStore } from "@/src/presentation/stores/ui.store";
-import { getErrorMessage } from "@/src/presentation/feedback/getErrorMessage";
 import { AuthScreenLayout } from "@/src/presentation/screens/auth/components/AuthScreenLayout";
 import {
   AuthTextField,
   PasswordRightToggle,
-  RightChevron,
 } from "@/src/presentation/screens/auth/components/AuthTextField";
 import { AuthButton } from "@/src/presentation/screens/auth/components/AuthButton";
+import { Select } from "@/src/presentation/components/Select";
+import { useRegisterForm } from "@/src/features/auth/hooks/useRegisterForm";
+import { useRegisterLocations } from "@/src/features/auth/hooks/useRegisterLocations";
 
 export default function RegisterScreen() {
   const router = useRouter();
-  const colorScheme = useColorScheme();
-  const theme = Colors[colorScheme ?? "light"];
-  const { register } = useAuth();
-  const showToast = useUiStore((s) => s.showToast);
-
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [email, setEmail] = useState("");
-  const [locationId, setLocationId] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const [address, setAddress] = useState("");
   const [passwordVisible, setPasswordVisible] = useState(false);
-  const [submitting, setSubmitting] = useState(false);
-
-  const canSubmit = useMemo(() => {
-    return (
-      username.trim() &&
-      password &&
-      firstName.trim() &&
-      lastName.trim() &&
-      email.trim() &&
-      locationId.trim() &&
-      phoneNumber.trim() &&
-      address.trim()
-    );
-  }, [
-    address,
-    email,
-    firstName,
-    lastName,
-    locationId,
-    password,
-    phoneNumber,
-    username,
-  ]);
-
-  async function onSubmit() {
-    if (!canSubmit || submitting) return;
-    setSubmitting(true);
-    try {
-      await register({
-        username: username.trim(),
-        password,
-        firstName: firstName.trim(),
-        lastName: lastName.trim(),
-        email: email.trim(),
-        locationId: locationId.trim(),
-        phoneNumber: phoneNumber.trim(),
-        address: address.trim(),
-      });
-      showToast("Cuenta creada", "success");
-      router.replace("/(tabs)");
-    } catch (e: any) {
-      showToast(getErrorMessage(e, "No se pudo registrar"), "error");
-    } finally {
-      setSubmitting(false);
-    }
-  }
+  const { form, setField, submitting, canSubmit, submit } = useRegisterForm();
+  const { locationOptions, loadingLocations, handleOpen } = useRegisterLocations("6da5c8f3-696e-42ca-8048-224fa5e4d204");
 
   return (
     <AuthScreenLayout variant="register" title="¡Regístrate ahora!">
@@ -88,8 +27,8 @@ export default function RegisterScreen() {
                 theme={theme}
                 label="Primer Nombre"
                 icon="user"
-                value={firstName}
-                onChangeText={setFirstName}
+                value={form.firstName}
+                onChangeText={(v) => setField("firstName", v)}
                 placeholder="Tu Nombre"
               />
             </View>
@@ -98,8 +37,8 @@ export default function RegisterScreen() {
                 theme={theme}
                 label="Apellido"
                 icon="user"
-                value={lastName}
-                onChangeText={setLastName}
+                value={form.lastName}
+                onChangeText={(v) => setField("lastName", v)}
                 placeholder="Tu Apellido"
               />
             </View>
@@ -111,8 +50,8 @@ export default function RegisterScreen() {
                 theme={theme}
                 label="Usuario"
                 icon="at"
-                value={username}
-                onChangeText={setUsername}
+                value={form.username}
+                onChangeText={(v) => setField("username", v)}
                 placeholder="Tu usuario"
                 inputProps={{
                   autoCapitalize: "none",
@@ -127,8 +66,8 @@ export default function RegisterScreen() {
                 theme={theme}
                 label="Teléfono"
                 icon="phone"
-                value={phoneNumber}
-                onChangeText={setPhoneNumber}
+                value={form.phoneNumber}
+                onChangeText={(v) => setField("phoneNumber", v)}
                 placeholder="Tu Teléfono"
                 inputProps={{
                   keyboardType: "phone-pad",
@@ -143,8 +82,8 @@ export default function RegisterScreen() {
             theme={theme}
             label="Correo Electrónico"
             icon="envelope"
-            value={email}
-            onChangeText={setEmail}
+            value={form.email}
+            onChangeText={(v) => setField("email", v)}
             placeholder="Tu correo"
             inputProps={{
               autoCapitalize: "none",
@@ -153,24 +92,25 @@ export default function RegisterScreen() {
               textContentType: "emailAddress",
             }}
           />
-
-          <AuthTextField
+          <Select
+            label={
+              loadingLocations
+                ? "Cargando ciudades..."
+                : "Selecciona una ciudad"
+            }
+            value={form.locationId}
+            options={locationOptions}
+            onChange={(v) => setField("locationId", v)}
+            onOpen={handleOpen}
             theme={theme}
-            label="Ciudad"
-            icon="map-marker"
-            value={locationId}
-            onChangeText={setLocationId}
-            placeholder="Tu ciudad"
-            inputProps={{ autoCapitalize: "none" }}
-            right={<RightChevron theme={theme} />}
           />
 
           <AuthTextField
             theme={theme}
             label="Dirección"
             icon="home"
-            value={address}
-            onChangeText={setAddress}
+            value={form.address}
+            onChangeText={(v) => setField("address", v)}
             placeholder="Tu dirección"
           />
 
@@ -178,8 +118,8 @@ export default function RegisterScreen() {
             theme={theme}
             label="Contraseña"
             icon="lock"
-            value={password}
-            onChangeText={setPassword}
+            value={form.password}
+            onChangeText={(v) => setField("password", v)}
             placeholder="••••••••"
             inputProps={{
               autoComplete: "password",
@@ -203,7 +143,7 @@ export default function RegisterScreen() {
             loadingLabel="Registrando…"
             loading={submitting}
             disabled={!canSubmit}
-            onPress={onSubmit}
+            onPress={submit}
           />
 
           <Pressable

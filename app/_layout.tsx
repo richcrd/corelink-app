@@ -10,6 +10,8 @@ import 'react-native-reanimated';
 import { useColorScheme } from '@/src/presentation/hooks/useColorScheme';
 import { ToastViewport } from '@/src/presentation/feedback/ToastViewport';
 import { useAuthStore } from '@/src/features/auth/store/auth.store';
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -59,12 +61,16 @@ function RootLayoutNav() {
   const colorScheme = useColorScheme();
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <AuthRedirect />
-      <Stack screenOptions={{ headerShown: false }}>
-      </Stack>
-      <ToastViewport />
-    </ThemeProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <BottomSheetModalProvider>
+        <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+          <AuthRedirect />
+          <Stack screenOptions={{ headerShown: false }}>
+          </Stack>
+          <ToastViewport />
+        </ThemeProvider>
+      </BottomSheetModalProvider>
+    </GestureHandlerRootView>
   );
 }
 

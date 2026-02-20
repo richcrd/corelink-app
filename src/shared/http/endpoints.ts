@@ -4,6 +4,8 @@ export const ENDPOINTS = {
     register: "/service/auth/register",
   },
   catalog: {
+    locationsByDepartment: (departmentId: string) =>
+      `/service/location/by-department/${departmentId}`,
     categories: "/categories",
     products: "/products",
   },
