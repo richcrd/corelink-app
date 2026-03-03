@@ -3,7 +3,7 @@ import { useLocations } from "../../locations/hooks/useLocations";
 import type { SelectOption } from "@/src/presentation/components/Select";
 
 export function useRegisterLocations(departmentId: string) {
-  const { locations, loading, load } = useLocations(departmentId);
+  const { data: locations = [], isLoading, refetch } = useLocations(departmentId);
 
   const options: SelectOption<string>[] = useMemo(
     () =>
@@ -15,12 +15,14 @@ export function useRegisterLocations(departmentId: string) {
   );
 
   function handleOpen() {
-    load();
+    if (!locations.length) {
+      refetch();
+    }
   }
 
   return {
     locationOptions: options,
-    loadingLocations: loading,
+    loadingLocations: isLoading,
     handleOpen,
   };
 }

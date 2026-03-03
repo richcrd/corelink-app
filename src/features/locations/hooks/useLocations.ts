@@ -1,29 +1,10 @@
-import { useCallback, useState } from "react";
-import { getLocationsByDepartmentService } from "../services/location.services";
-import type { LocationDto } from "../types/Location";
+import { useQuery } from "@tanstack/react-query";
+import { locationRepository } from "../api/location.repository";
 
 export function useLocations(departmentId: string) {
-  const [data, setData] = useState<LocationDto[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [loaded, setLoaded] = useState(false);
-
-  const load = useCallback(async () => {
-    if (loaded || loading) return;
-
-    setLoading(true);
-
-    try {
-      const result = await getLocationsByDepartmentService(departmentId);
-      setData(result);
-      setLoaded(true);
-    } finally {
-      setLoading(false);
-    }
-  }, [departmentId, loaded, loading]);
-
-  return {
-    locations: data,
-    loading,
-    load,
-  };
+  return useQuery({
+    queryKey: ["locations", departmentId],
+    queryFn: () => locationRepository.getByDepartment(departmentId),
+    enabled: false,
+  })
 }

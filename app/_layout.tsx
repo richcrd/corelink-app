@@ -12,6 +12,8 @@ import { ToastViewport } from '@/src/presentation/feedback/ToastViewport';
 import { useAuthStore } from '@/src/features/auth/store/auth.store';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { QueryClientProvider } from '@tanstack/react-query';
+import { queryClient } from '@/src/shared/http/queryClient';
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -62,14 +64,16 @@ function RootLayoutNav() {
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <BottomSheetModalProvider>
-        <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-          <AuthRedirect />
-          <Stack screenOptions={{ headerShown: false }}>
-          </Stack>
-          <ToastViewport />
-        </ThemeProvider>
-      </BottomSheetModalProvider>
+      <QueryClientProvider client={queryClient}>
+        <BottomSheetModalProvider>
+          <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+            <AuthRedirect />
+            <Stack screenOptions={{ headerShown: false }}>
+            </Stack>
+            <ToastViewport />
+          </ThemeProvider>
+        </BottomSheetModalProvider>
+      </QueryClientProvider>
     </GestureHandlerRootView>
   );
 }

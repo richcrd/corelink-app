@@ -4,5 +4,5 @@ import { LocationDto } from "../types/Location";
 
 export const locationRepository = {
   getByDepartment: (departmentId: string) =>
-    get<LocationDto[]>(ENDPOINTS.catalog.locationsByDepartment(departmentId)),
+    get<LocationDto[]>(ENDPOINTS.location.getByDepartment(departmentId)),
 };
