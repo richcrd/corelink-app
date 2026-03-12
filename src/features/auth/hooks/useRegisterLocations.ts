@@ -1,11 +1,11 @@
 import { useMemo } from "react";
-import { useLocations } from "../../locations/hooks/useLocations";
+import { useBranches } from "../../branches/hooks/useBranches";
 import type { SelectOption } from "@/src/presentation/components/Select";
 
-export function useRegisterLocations(departmentId: string) {
-  const { data: locations = [], isLoading, refetch } = useLocations(departmentId);
+export function useRegisterLocations(departmentId: number) {
+  const { data: locations = [], isLoading, refetch } = useBranches(departmentId);
 
-  const options: SelectOption<string>[] = useMemo(
+  const options: SelectOption<number>[] = useMemo(
     () =>
       locations.map((l) => ({
         label: l.name,

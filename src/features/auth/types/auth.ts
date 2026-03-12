@@ -11,6 +11,7 @@ export type RegisterBody = {
   firstName?: string;
   lastName?: string;
   email?: string;
+  branchId?: number;
   locationId?: string;
   phoneNumber?: string;
   address?: string;

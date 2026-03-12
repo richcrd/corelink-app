@@ -1,6 +1,5 @@
 import React, { useEffect } from "react";
 import {
-  ImageBackground,
   ScrollView,
   StyleSheet,
   useWindowDimensions,
@@ -16,18 +15,36 @@ import { getErrorMessage } from "@/src/presentation/feedback/getErrorMessage";
 import { CategoriesCarousel } from "./components/CategoriesCarousel";
 import { ProductsCarousel } from "./components/ProductsCarousel";
 import { OccasionSection } from "./components/OccasionSection";
+import { useBranchesStore } from "@/src/features/branches/store/Branches.store";
+import { AdsCarousel, type AdItem } from "@/src/presentation/screens/home/components/AdsCarousel";
+import {
+  QuickActionsRow,
+  type QuickActionItem,
+} from "@/src/presentation/screens/home/components/QuickActionsRow";
 
-const BANNER_IMAGE = require("@/assets/images/main_banner.jpg");
-const branchId = "5581bff3-7fb7-49c8-b193-420b2066b7db";
+const BANNER_IMAGE = require("@/assets/images/image_banner_800.webp");
 const MAX_CATEGORIES = 10;
 const MAX_PRODUCTS = 8;
-const OCCASIONS = [
-  "Desayuno",
-  "Almuerzo",
-  "Cena",
-  "Snacks",
-  "Oficina",
-  "Fin de semana",
+
+const ADS: AdItem[] = [
+  {
+    id: "ad-1",
+    image: BANNER_IMAGE,
+  },
+  {
+    id: "ad-2",
+    image: BANNER_IMAGE,
+  },
+  {
+    id: "ad-3",
+    image: BANNER_IMAGE,
+  },
+];
+
+const QUICK_ACTIONS: QuickActionItem[] = [
+  { id: "qa-1", title: "Promociones", subtitle: "Ver descuentos activos" },
+  { id: "qa-2", title: "Nuevos", subtitle: "Productos recién agregados" },
+  { id: "qa-3", title: "Más vendidos", subtitle: "Los favoritos del mes" },
 ];
 
 export default function HomeScreen() {
@@ -36,16 +53,18 @@ export default function HomeScreen() {
   const colorScheme = useColorScheme();
   const theme = Colors[colorScheme ?? "light"];
   const showToast = useUiStore((s) => s.showToast);
+  const selectedBranchId = useBranchesStore((s) => s.selectedBranchId);
   const carouselWidth = width - 32;
   const categoryGap = 12;
   const itemWidth = (carouselWidth - categoryGap * 3) / 4;
 
-  const { data: products = [], 
+  const { data: products = [],
     isLoading: loadingProducts,
     error: productsError,
-  } = useProducts(branchId);
+  } = useProducts(selectedBranchId);
 
-  const { data: categories = [],
+  const {
+    data: categories = [],
     error: categoriesError,
   } = useCategories();
 
@@ -54,15 +73,21 @@ export default function HomeScreen() {
 
   useEffect(() => {
     if (productsError) {
-      showToast(getErrorMessage(productsError, "Error cargando productos"), "error");
+      showToast(
+        getErrorMessage(productsError, "Error cargando productos"),
+        "error",
+      );
     }
-  }, [productsError]);
+  }, [productsError, showToast]);
 
   useEffect(() => {
     if (categoriesError) {
-      showToast(getErrorMessage(categoriesError, "Error cargando categorias"), "error");
+      showToast(
+        getErrorMessage(categoriesError, "Error cargando categorias"),
+        "error",
+      );
     }
-  }, [categoriesError]);
+  }, [categoriesError, showToast]);
 
   function onPressComingSoon() {
     showToast("Próximamente", "info");
@@ -70,6 +95,14 @@ export default function HomeScreen() {
 
   function onPressCategory(categoryName: string) {
     showToast(`Categoría: ${categoryName}`, "info");
+  }
+
+  function onPressAd(ad: AdItem) {
+    showToast('Anuncio', "info");
+  }
+
+  function onPressAction(action: QuickActionItem) {
+    showToast(action.title, "info");
   }
 
   function onPressOccasion(occasion: string) {
@@ -82,13 +115,13 @@ export default function HomeScreen() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 24 + insets.bottom }}
       >
-        <View style={styles.bannerSection}>
-          <ImageBackground
-            source={BANNER_IMAGE}
-            style={[styles.bannerCard, { backgroundColor: theme.card }]}
-            imageStyle={styles.bannerImage}
-          />
-        </View>
+        <AdsCarousel ads={ADS} width={width} theme={theme} onPressAd={onPressAd} />
+
+        <QuickActionsRow
+          actions={QUICK_ACTIONS}
+          theme={theme}
+          onPressAction={onPressAction}
+        />
 
         <CategoriesCarousel
           categories={displayedCategories}
@@ -106,11 +139,6 @@ export default function HomeScreen() {
           onPressProduct={onPressComingSoon}
         />
 
-        <OccasionSection
-          occasions={OCCASIONS}
-          theme={theme}
-          onPressOccasion={onPressOccasion}
-        />
       </ScrollView>
     </View>
   );
@@ -118,20 +146,4 @@ export default function HomeScreen() {
 
 const styles = StyleSheet.create({
   root: { flex: 1 },
-
-  bannerSection: {
-    paddingHorizontal: 16,
-    paddingTop: 18,
-    paddingBottom: 10,
-  },
-  bannerCard: {
-    height: 160,
-    width: "100%",
-    borderRadius: 12,
-    overflow: "hidden",
-  },
-  bannerImage: {
-    width: "100%",
-    height: "100%",
-  },
 });

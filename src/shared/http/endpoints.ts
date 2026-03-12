@@ -1,6 +1,6 @@
 const AUTH_BASE = `/service/auth`;
 const PRODUCT_CATEGORY_BASE = `/service/product-category`;
-const LOCATION_BASE = `/service/location`;
+const BRANCH_BASE = `/service/branch`;
 const PRODUCTS_BASE = `/service/product`
 
 export const ENDPOINTS = {
@@ -11,16 +11,16 @@ export const ENDPOINTS = {
 
   productCategory: {
     getAll: PRODUCT_CATEGORY_BASE,
-    getById: (id: string) => `${PRODUCT_CATEGORY_BASE}/${id}`,
+    getById: (id: number) => `${PRODUCT_CATEGORY_BASE}/${id}`,
   },
 
-  location: {
-    getByDepartment: (departmentId: string) =>
-      `${LOCATION_BASE}/by-department/${departmentId}`,
+  branch: {
+    getByDepartment: (departmentId: number) =>
+      `${BRANCH_BASE}/by-department/${departmentId}`,
   },
 
   product: {
-    getByBranch: (branchId: string) =>
+    getByBranch: (branchId: number) =>
       `${PRODUCTS_BASE}/branch/${branchId}`
   }
 } as const;

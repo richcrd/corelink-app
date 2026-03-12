@@ -34,11 +34,11 @@ export default function TabLayout() {
       />
 
       <Tabs.Screen
-        name="sections"
+        name="orders"
         options={{
-          title: 'Pasillos',
+          title: 'Compras',
           tabBarIcon: ({ color }) => <TabBarIcon name="th-large" color={color} />,
-          header: () => <AppHeader showSearch={false} showCart />,
+          header: () => <AppHeader showSearch showCart />,
         }}
       />
 

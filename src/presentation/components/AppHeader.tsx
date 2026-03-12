@@ -1,5 +1,6 @@
 import Feather from '@expo/vector-icons/Feather';
 import { useSegments } from 'expo-router';
+import { useEffect, useMemo } from 'react';
 import type { ReactNode } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -9,6 +10,11 @@ import { useColorScheme } from '@/src/presentation/hooks/useColorScheme';
 import { useUiStore } from '../stores/ui.store';
 import { useAuthStore } from '@/src/features/auth/store/auth.store';
 import { useCartStore } from '@/src/features/cart/store/cartStore';
+import { useBranches } from '@/src/features/branches/hooks/useBranches';
+import { DEFAULT_DEPARTMENT_ID } from '@/src/features/branches/constants';
+import { useBranchesStore } from '@/src/features/branches/store/Branches.store';
+import { getErrorMessage } from '@/src/presentation/feedback/getErrorMessage';
+import { Select } from '@/src/presentation/components/Select';
 
 import { getUserDisplayName } from '@/src/features/auth/types/user';
 
@@ -38,6 +44,26 @@ export function AppHeader({ showSearch, showCart, rightSlot }: AppHeaderProps) {
 
   const cartCount = useCartStore((s) => s.totalItems());
   const showToast = useUiStore((s) => s.showToast);
+  const branches = useBranchesStore((s) => s.branches);
+  const selectedBranchId = useBranchesStore((s) => s.selectedBranchId);
+  const setBranches = useBranchesStore((s) => s.setBranches);
+  const selectBranch = useBranchesStore((s) => s.selectBranch);
+
+  const {
+    data: fetchedBranches = [],
+    isLoading: loadingBranches,
+    error: branchesError,
+    refetch: refetchBranches,
+  } = useBranches(DEFAULT_DEPARTMENT_ID);
+
+  const branchOptions = useMemo(
+    () =>
+      branches.map((b) => ({
+        label: b.name,
+        value: b.id,
+      })),
+    [branches],
+  );
 
   const group = segments[0];
   const route = segments[1];
@@ -56,6 +82,32 @@ export function AppHeader({ showSearch, showCart, rightSlot }: AppHeaderProps) {
     : inTabs
       ? 'Inicia sesión para continuar'
       : '';
+
+  useEffect(() => {
+    if (fetchedBranches.length) {
+      setBranches(fetchedBranches);
+    }
+  }, [fetchedBranches, setBranches]);
+
+  useEffect(() => {
+    if (branchesError) {
+      showToast(getErrorMessage(branchesError, 'Error cargando sucursales'), 'error');
+    }
+  }, [branchesError, showToast]);
+
+  function onOpenBranchSelect() {
+    if (!branches.length && !loadingBranches) {
+      refetchBranches();
+    }
+  }
+
+  function onChangeBranch(branchId: number) {
+    selectBranch(branchId);
+    const selected = branches.find((b) => b.id === branchId);
+    if (selected) {
+      showToast(`Sucursal: ${selected.name}`, 'info');
+    }
+  }
 
   return (
     <View
@@ -86,6 +138,36 @@ export function AppHeader({ showSearch, showCart, rightSlot }: AppHeaderProps) {
         <View style={{ flex: 1 }} />
 
         {rightSlot ? <View style={styles.rightSlot}>{rightSlot}</View> : null}
+
+        {inTabs ? (
+          <View style={styles.branchIconWrap}>
+            <Select
+              label={loadingBranches ? 'Cargando sucursales...' : 'Selecciona sucursal'}
+              value={selectedBranchId ?? undefined}
+              options={branchOptions}
+              onOpen={onOpenBranchSelect}
+              onChange={onChangeBranch}
+              renderTrigger={({ open }) => (
+                <Pressable
+                  onPress={open}
+                  style={({ pressed }) => [
+                    styles.branchIconBtn,
+                    { opacity: pressed ? 0.7 : 1 },
+                  ]}
+                >
+                  <Feather name="map-pin" size={18} color={theme.textOnPrimary} />
+                </Pressable>
+              )}
+              theme={{
+                card: theme.card,
+                text: theme.text,
+                primary: theme.primary,
+                border: theme.border,
+                placeholder: theme.tabIconDefault,
+              }}
+            />
+          </View>
+        ) : null}
 
         {effectiveShowCart ? (
           <View style={[styles.actionPill, { backgroundColor: 'transparent' }]}>
@@ -170,5 +252,15 @@ const styles = StyleSheet.create({
   searchPlaceholder: {
     fontSize: 14,
     fontWeight: '600',
+  },
+  branchIconWrap: {
+    marginRight: 6,
+  },
+  branchIconBtn: {
+    width: 34,
+    height: 34,
+    borderRadius: 999,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });

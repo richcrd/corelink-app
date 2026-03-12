@@ -10,14 +10,13 @@ import { AuthButton } from "@/src/presentation/screens/auth/components/AuthButto
 import { Select } from "@/src/presentation/components/Select";
 import { useRegisterForm } from "@/src/features/auth/hooks/useRegisterForm";
 import { useRegisterLocations } from "@/src/features/auth/hooks/useRegisterLocations";
-
-const departmentId = "6da5c8f3-696e-42ca-8048-224fa5e4d204";
+import { DEFAULT_DEPARTMENT_ID } from "@/src/features/branches/constants";
 
 export default function RegisterScreen() {
   const router = useRouter();
   const [passwordVisible, setPasswordVisible] = useState(false);
   const { form, setField, submitting, canSubmit, submit } = useRegisterForm();
-  const { locationOptions, loadingLocations, handleOpen } = useRegisterLocations(departmentId);
+  const { locationOptions, loadingLocations, handleOpen } = useRegisterLocations(DEFAULT_DEPARTMENT_ID);
 
   return (
     <AuthScreenLayout variant="register" title="¡Regístrate ahora!">
@@ -100,9 +99,9 @@ export default function RegisterScreen() {
                 ? "Cargando ciudades..."
                 : "Selecciona una ciudad"
             }
-            value={form.locationId}
+            value={form.branchId}
             options={locationOptions}
-            onChange={(v) => setField("locationId", v)}
+            onChange={(v) => setField("branchId", v)}
             onOpen={handleOpen}
             theme={theme}
           />

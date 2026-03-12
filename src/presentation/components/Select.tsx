@@ -14,6 +14,7 @@ type Props<T> = {
   options: SelectOption<T>[];
   onOpen?: () => void;
   onChange: (value: T) => void;
+  renderTrigger?: (args: { open: () => void; selectedLabel?: string }) => React.ReactNode;
   theme: {
     card: string;
     text: string;
@@ -30,6 +31,7 @@ export function Select<T>({
   options,
   onChange,
   onOpen,
+  renderTrigger,
 }: Props<T>) {
   const sheetRef = useRef<BottomSheetModal>(null);
 
@@ -49,26 +51,30 @@ export function Select<T>({
 
   return (
     <>
-      <Pressable
-        onPress={open}
-        style={{
-          height: 48,
-          justifyContent: "center",
-          paddingHorizontal: 12,
-          borderRadius: 12,
-          backgroundColor: theme.card,
-          borderColor: theme.border ?? "transparent",
-        }}
-      >
-        <Text
+      {renderTrigger ? (
+        renderTrigger({ open, selectedLabel: selected?.label })
+      ) : (
+        <Pressable
+          onPress={open}
           style={{
-            color: selected ? theme.text : (theme.placeholder ?? "#999"),
-            fontWeight: "600",
+            height: 48,
+            justifyContent: "center",
+            paddingHorizontal: 12,
+            borderRadius: 12,
+            backgroundColor: theme.card,
+            borderColor: theme.border ?? "transparent",
           }}
         >
-          {selected?.label ?? label}
-        </Text>
-      </Pressable>
+          <Text
+            style={{
+              color: selected ? theme.text : (theme.placeholder ?? "#999"),
+              fontWeight: "600",
+            }}
+          >
+            {selected?.label ?? label}
+          </Text>
+        </Pressable>
+      )}
 
       <AppBottomSheet ref={sheetRef} snapPoints={["60%"]} theme={theme}>
         <BottomSheetFlatList<SelectOption<T>>

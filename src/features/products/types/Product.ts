@@ -1,5 +1,5 @@
 export type ProductDto = {
-  id: string;
+  id: number;
   name: string;
   imageUrl: string | null;
   originalPrice: number;

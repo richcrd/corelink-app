@@ -1,5 +1,5 @@
-export type LocationDto = {
-    id: string;
+export type BranchDto = {
+    id: number;
     name: string;
     departmentName: string;
 }
