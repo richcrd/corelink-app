@@ -6,10 +6,12 @@ import {
   Pressable,
   StyleSheet,
   Text,
+  TouchableOpacity,
   View,
 } from "react-native";
 import type Colors from "@/src/presentation/constants/Colors";
 import type { ProductDto } from "@/src/features/products/types/Product";
+import { Plus } from 'lucide-react-native';
 
 type Theme = typeof Colors.light;
 
@@ -40,7 +42,7 @@ export function ProductsCarousel({
         <FlatList
           data={products}
           horizontal
-          keyExtractor={(p) => p.id}
+          keyExtractor={(item, index) => item.id.toString() || index.toString()}
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={styles.productsRow}
           renderItem={({ item }) => (
@@ -68,6 +70,9 @@ export function ProductsCarousel({
                 <Text style={[styles.prodName, { color: theme.text }]} numberOfLines={2}>
                   {item.name}
                 </Text>
+                <TouchableOpacity style={[styles.addIcon, { backgroundColor: theme.primary }]} onPress={onPressProduct}>
+                  <Plus size={20} color={theme.card} />
+                </TouchableOpacity>
                 <Text style={[styles.prodPrice, { color: theme.text }]}>C${item.finalPrice.toFixed(2)}</Text>
               </View>
             </Pressable>
@@ -91,7 +96,7 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 18,
-    fontWeight: "900",
+    fontWeight: "800",
   },
   seeAll: {
     fontSize: 13,
@@ -141,4 +146,11 @@ const styles = StyleSheet.create({
     lineHeight: 16,
     minHeight: 32,
   },
+  addIcon: {
+    position: "absolute",
+    top: 35,
+    right: 10,
+    borderRadius: 100,
+    padding: 4,
+  }
 });

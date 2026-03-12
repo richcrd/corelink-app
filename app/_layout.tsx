@@ -14,6 +14,8 @@ import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { queryClient } from '@/src/shared/http/queryClient';
+import ScreenLoading from '@/src/presentation/components/ScreenLoading';
+import { useLoading } from '@/src/presentation/hooks/useLoading';
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -68,6 +70,8 @@ function RootLayoutNav() {
         <BottomSheetModalProvider>
           <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
             <AuthRedirect />
+            <Loading />
+            <ScreenLoading />
             <Stack screenOptions={{ headerShown: false }}>
             </Stack>
             <ToastViewport />
@@ -76,6 +80,11 @@ function RootLayoutNav() {
       </QueryClientProvider>
     </GestureHandlerRootView>
   );
+}
+
+function Loading() {
+  useLoading();
+  return null;
 }
 
 function AuthRedirect() {

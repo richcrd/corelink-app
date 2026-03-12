@@ -14,7 +14,6 @@ import { useProducts } from "@/src/features/products/hooks/useProducts";
 import { getErrorMessage } from "@/src/presentation/feedback/getErrorMessage";
 import { CategoriesCarousel } from "./components/CategoriesCarousel";
 import { ProductsCarousel } from "./components/ProductsCarousel";
-import { OccasionSection } from "./components/OccasionSection";
 import { useBranchesStore } from "@/src/features/branches/store/Branches.store";
 import { AdsCarousel, type AdItem } from "@/src/presentation/screens/home/components/AdsCarousel";
 import {
@@ -105,10 +104,6 @@ export default function HomeScreen() {
     showToast(action.title, "info");
   }
 
-  function onPressOccasion(occasion: string) {
-    showToast(`Ocasión: ${occasion}`, "info");
-  }
-
   return (
     <View style={[styles.root, { backgroundColor: theme.background }]}>
       <ScrollView
@@ -123,21 +118,25 @@ export default function HomeScreen() {
           onPressAction={onPressAction}
         />
 
-        <CategoriesCarousel
-          categories={displayedCategories}
-          theme={theme}
-          itemWidth={itemWidth}
-          categoryGap={categoryGap}
-          onPressCategory={onPressCategory}
-          onPressSeeAll={onPressComingSoon}
-        />
+        {displayedCategories.length > 0 && (
+          <CategoriesCarousel
+            categories={displayedCategories}
+            theme={theme}
+            itemWidth={itemWidth}
+            categoryGap={categoryGap}
+            onPressCategory={onPressCategory}
+            onPressSeeAll={onPressComingSoon}
+          />
+        )}
 
-        <ProductsCarousel
-          products={displayedProducts}
-          loading={loadingProducts}
-          theme={theme}
-          onPressProduct={onPressComingSoon}
-        />
+        {displayedProducts.length > 0 && (
+          <ProductsCarousel
+            products={displayedProducts}
+            loading={loadingProducts}
+            theme={theme}
+            onPressProduct={onPressComingSoon}
+          />
+        )}
 
       </ScrollView>
     </View>
