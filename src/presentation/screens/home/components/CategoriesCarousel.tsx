@@ -11,7 +11,7 @@ type CategoriesCarouselProps = {
   itemWidth: number;
   categoryGap: number;
   onPressSeeAll: () => void;
-  onPressCategory: (categoryName: string) => void;
+  onPressCategory: (id: number) => void;
 };
 
 export function CategoriesCarousel({
@@ -43,7 +43,7 @@ export function CategoriesCarousel({
           const isLast = index === categories.length - 1;
           return (
             <Pressable
-              onPress={() => onPressCategory(item.name)}
+              onPress={() => onPressCategory(Number(item.id))}
               style={({ pressed }) => [
                 styles.categoryItem,
                 {

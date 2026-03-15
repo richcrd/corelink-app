@@ -21,6 +21,8 @@ export const ENDPOINTS = {
 
   product: {
     getByBranch: (branchId: number) =>
-      `${PRODUCTS_BASE}/branch/${branchId}`
+      `${PRODUCTS_BASE}/branch/${branchId}`,
+    getByBranchAndCategory: (branchId: number, categoryId: number, page: number = 1, pageSize: number = 10) =>
+      `${PRODUCTS_BASE}/branch/${branchId}/category/${categoryId}?page=${page}&pageSize=${pageSize}`
   }
 } as const;

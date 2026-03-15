@@ -12,6 +12,7 @@ import {
 import type Colors from "@/src/presentation/constants/Colors";
 import type { ProductDto } from "@/src/features/products/types/Product";
 import { Plus } from 'lucide-react-native';
+import { formatCurrency } from "@/src/presentation/utils/common";
 
 type Theme = typeof Colors.light;
 
@@ -73,7 +74,7 @@ export function ProductsCarousel({
                 <TouchableOpacity style={[styles.addIcon, { backgroundColor: theme.primary }]} onPress={onPressProduct}>
                   <Plus size={20} color={theme.card} />
                 </TouchableOpacity>
-                <Text style={[styles.prodPrice, { color: theme.text }]}>C${item.finalPrice.toFixed(2)}</Text>
+                <Text style={[styles.prodPrice, { color: theme.text }]}>{formatCurrency(item.finalPrice)}</Text>
               </View>
             </Pressable>
           )}
@@ -136,7 +137,7 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   prodPrice: {
-    fontSize: 14,
+    fontSize: 12,
     fontWeight: "700",
   },
   prodName: {

@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import { router } from "expo-router";
 import {
   ScrollView,
   StyleSheet,
@@ -92,8 +93,11 @@ export default function HomeScreen() {
     showToast("Próximamente", "info");
   }
 
-  function onPressCategory(categoryName: string) {
-    showToast(`Categoría: ${categoryName}`, "info");
+  function onPressCategory(categoryId: number) {
+    router.push({
+      pathname: "/products",
+      params: { categoryId }
+    });
   }
 
   function onPressAd(ad: AdItem) {
