@@ -5,6 +5,7 @@ import Colors from "@/src/presentation/constants/Colors";
 import { useColorScheme } from "@/src/presentation/hooks/useColorScheme";
 import { useCartStore } from "@/src/features/cart/store/cartStore";
 import { useUiStore } from "../stores/ui.store";
+import { useRouter } from "expo-router";
 
 export function HeaderCartButton({
   onPress,
@@ -15,6 +16,7 @@ export function HeaderCartButton({
   countOverride?: number;
   variant?: "default" | "onPrimary";
 }) {
+  const router = useRouter();
   const colorScheme = useColorScheme();
   const theme = Colors[colorScheme ?? "light"];
   const countFromStore = useCartStore((s) => s.totalItems());
@@ -23,7 +25,7 @@ export function HeaderCartButton({
 
   function handlePress() {
     if (onPress) return onPress();
-    showToast("Carrito próximamente", "info");
+    router.push("/cart");
   }
 
   const isDark = colorScheme === "dark";

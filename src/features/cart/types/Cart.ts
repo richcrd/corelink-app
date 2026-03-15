@@ -1,12 +1,22 @@
-import { Product } from "./Product";
 
 export type CartItem = {
-  product: Product;
+  id: number;
+  branchProductId: number;
+  productId: number;
+  productName: string;
+  imageUrl?: string | null;
+  price: number;
   quantity: number;
+  subtotal: number;
 };
 
 export type Cart = {
+  id: number;
+  userId: number;
+  branchId: number;
   items: CartItem[];
+  totalItems: number;
+  totalAmount: number;
 };
 
 export function getCartItemsCount(items: CartItem[]): number {
@@ -14,5 +24,5 @@ export function getCartItemsCount(items: CartItem[]): number {
 }
 
 export function getCartTotal(items: CartItem[]): number {
-  return items.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
+  return items.reduce((sum, item) => sum + item.subtotal, 0);
 }
