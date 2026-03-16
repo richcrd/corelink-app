@@ -53,7 +53,7 @@ const ProductsView = ({ categoryId }: ProductsViewProps) => {
 
   async function onPressAdd(item: ProductDto) {
     try {
-      const branchProductId = item.id;
+      const branchProductId = item.branchProductId;
       await addItem({ branchProductId, quantity: 1});
     } catch (error) {
       showToast(getErrorMessage(error, "No se pudo agregar al carrito"), "error");

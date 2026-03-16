@@ -1,5 +1,6 @@
 export type ProductDto = {
   id: number;
+  branchProductId: number;
   name: string;
   imageUrl: string | null;
   originalPrice: number;
