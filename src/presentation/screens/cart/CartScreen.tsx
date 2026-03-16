@@ -14,8 +14,10 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useCart } from "@/src/features/cart/hooks/useCart";
 import { useCartStore } from "@/src/features/cart/store/cartStore";
 import { getErrorMessage } from "../../feedback/getErrorMessage";
-import { CartItem } from "@/src/features/cart/types/Cart";
+import { Cart, CartItem } from "@/src/features/cart/types/Cart";
 import { formatCurrency } from "../../utils/common";
+import { useCartMutations } from "@/src/features/cart/hooks/useCartMutations";
+import { useUiStore } from "../../stores/ui.store";
 
 export default function CartScreen() {
   const colorScheme = useColorScheme();
@@ -27,6 +29,38 @@ export default function CartScreen() {
   const setCart = useCartStore((s) => s.setCart);
   const totalItems = useCartStore((s) => s.totalItems());
   const totalPrice = useCartStore((s) => s.totalPrice());
+  const { updateItem, removeItem, isUpdatingItem, isRemovingItem } = useCartMutations();
+  const showToast = useUiStore((s) => s.showToast);
+
+  async function onIncrease(item: CartItem) {
+    try {
+      await updateItem({ 
+        branchProductId: item.branchProductId, 
+        quantityDelta: 1 
+      });
+    } catch (e) {
+      showToast(getErrorMessage(e, "No se pudo actualizar"), "error");
+    }
+  }
+
+  async function onDecrease(item: CartItem) {
+    try {
+      await updateItem({
+        branchProductId: item.branchProductId,
+        quantityDelta: -1
+      })
+    } catch (e) {
+      showToast(getErrorMessage(e, "No se pudo actualizar"), "error");
+    }
+  }
+
+  async function onRemove(item: CartItem) {
+    try {
+      await removeItem(item.branchProductId);
+    } catch (e) {
+      showToast(getErrorMessage(e, "No se pudo eliminar"), "error");
+    }
+  }
 
   useEffect(() => {
     setCart(data ?? null);
@@ -96,7 +130,16 @@ export default function CartScreen() {
         ItemSeparatorComponent={() => <View style={{ height: 10 }} />}
         refreshing={isFetching}
         onRefresh={refetch}
-        renderItem={({ item }) => <CartRow item={item} theme={theme} />}
+        renderItem={({ item }) => (
+          <CartRow 
+            item={item} 
+            theme={theme}
+            onIncrease={() => onIncrease(item)}
+            onDecrease={() => onDecrease(item)}
+            onRemove={() => onRemove(item)}
+            disabled={isUpdatingItem || isRemovingItem}
+          />
+        )}
       />
     </View>
   );
@@ -105,9 +148,17 @@ export default function CartScreen() {
 function CartRow({
   item,
   theme,
+  onIncrease,
+  onDecrease,
+  onRemove,
+  disabled,
 }: {
   item: CartItem;
   theme: (typeof Colors)["light"] | (typeof Colors)["dark"];
+  onIncrease: () => void;
+  onDecrease: () => void;
+  onRemove: () => void;
+  disabled: boolean;
 }) {
   return (
     <View
@@ -156,6 +207,32 @@ function CartRow({
       <Text style={[styles.lineTotal, { color: theme.text }]}>
         {formatCurrency(item.subtotal)}
       </Text>
+      <View style={styles.actionsRow}>
+        <Pressable
+          onPress={onDecrease}
+          disabled={disabled}
+          style={[
+            styles.qtyBtn,
+            { borderColor: theme.border, opacity: disabled ? 0.6 : 1 },
+          ]}
+        >
+          <Text style={[styles.qtyBtnText, { color: theme.text }]}>-</Text>
+        </Pressable>
+        <Text style={[styles.qtyValue, { color: theme.text }]}>{item.quantity}</Text>
+        <Pressable
+          onPress={onIncrease}
+          disabled={disabled}
+          style={[
+            styles.qtyBtn,
+            { borderColor: theme.border, opacity: disabled ? 0.6 : 1 },
+          ]}
+        >
+          <Text style={[styles.qtyBtnText, { color: theme.text }]}>+</Text>
+        </Pressable>
+        <Pressable onPress={onRemove} disabled={disabled} style={{ marginLeft: 10 }}>
+          <Text style={{ color: theme.primary, fontWeight: "700", fontSize: 12 }}>Eliminar</Text>
+        </Pressable>
+      </View>
     </View>
   );
 }
@@ -251,5 +328,29 @@ const styles = StyleSheet.create({
   summaryValue: {
     fontSize: 16,
     fontWeight: "900",
+  },
+  actionsRow: {
+    marginTop: 8,
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  qtyBtn: {
+    width: 26,
+    height: 26,
+    borderWidth: 1,
+    borderRadius: 6,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  qtyBtnText: {
+    fontSize: 16,
+    fontWeight: "700",
+  },
+  qtyValue:  {
+    marginHorizontal: 10,
+    minWidth: 18,
+    textAlign: "center",
+    fontSize: 13,
+    fontWeight: "700",
   },
 });

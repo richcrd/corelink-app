@@ -13,3 +13,16 @@ export async function get<TResponse>(url: string): Promise<TResponse> {
   const { data } = await api.get<Api<TResponse>>(url);
   return unwrap<TResponse>(data);
 }
+
+export async function patch<TRequest, TResponse>(
+  url: string,
+  body: TRequest,
+): Promise<TResponse> {
+  const { data } = await api.patch<Api<TResponse>>(url, body);
+  return unwrap<TResponse>(data);
+}
+
+export async function del<TResponse>(url: string): Promise<TResponse> {
+  const { data } = await api.delete<Api<TResponse>>(url);
+  return unwrap<TResponse>(data);
+}

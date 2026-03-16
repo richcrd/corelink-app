@@ -19,6 +19,15 @@ export type Cart = {
   totalAmount: number;
 };
 
+export type AddCartItemRequest = {
+  branchProductId: number;
+  quantity: number;
+}
+
+export type UpdateCartItemRequest = {
+  quantityDelta: number;
+}
+
 export function getCartItemsCount(items: CartItem[]): number {
   return items.reduce((sum, item) => sum + item.quantity, 0);
 }

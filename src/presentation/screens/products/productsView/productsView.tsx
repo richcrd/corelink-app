@@ -7,6 +7,9 @@ import Colors from "@/src/presentation/constants/Colors";
 import { formatCurrency } from "@/src/presentation/utils/common";
 import { Plus } from "lucide-react-native";
 import { ProductDto } from "@/src/features/products/types/Product";
+import { useCartMutations } from "@/src/features/cart/hooks/useCartMutations";
+import { useUiStore } from "@/src/presentation/stores/ui.store";
+import { getErrorMessage } from "@/src/presentation/feedback/getErrorMessage";
 
 interface ProductsViewProps {
   categoryId?: string;
@@ -22,6 +25,8 @@ const ProductsView = ({ categoryId }: ProductsViewProps) => {
   const colorScheme = useColorScheme();
   const theme = Colors[colorScheme ?? "light"];
   const parsedCategoryId = categoryId ? Number(categoryId) : null;
+  const { addItem, isAddingItem } = useCartMutations();
+  const showToast = useUiStore((s) => s.showToast);
 
   const {
     data,
@@ -45,6 +50,15 @@ const ProductsView = ({ categoryId }: ProductsViewProps) => {
       fetchNextPage();
     }
   };
+
+  async function onPressAdd(item: ProductDto) {
+    try {
+      const branchProductId = item.id;
+      await addItem({ branchProductId, quantity: 1});
+    } catch (error) {
+      showToast(getErrorMessage(error, "No se pudo agregar al carrito"), "error");
+    }
+  }
 
   const renderItem = ({ item }: { item: ProductDto }) => (
     <Pressable
@@ -72,7 +86,11 @@ const ProductsView = ({ categoryId }: ProductsViewProps) => {
         <Text style={[styles.prodName, { color: theme.text }]} numberOfLines={2}>
           {item.name}
         </Text>
-        <TouchableOpacity style={[styles.addIcon, { backgroundColor: theme.primary }]}>
+        <TouchableOpacity 
+          style={[styles.addIcon, { backgroundColor: theme.primary, opacity: isAddingItem ? 0.6 : 1 }]}
+          onPress={() => onPressAdd(item)}
+          disabled={isAddingItem}
+        >
           <Plus size={16} color={theme.card} />
         </TouchableOpacity>
         <Text style={[styles.prodPrice, { color: theme.text }]}>
