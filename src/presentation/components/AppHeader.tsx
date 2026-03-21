@@ -19,6 +19,7 @@ import { Select } from "@/src/presentation/components/Select";
 import { getUserDisplayName } from "@/src/features/auth/types/user";
 
 import { HeaderCartButton } from "@/src/presentation/components/HeaderCartButton";
+import { useCart } from "@/src/features/cart/hooks/useCart";
 
 export type AppHeaderProps = {
   variant?: "default" | "page";
@@ -55,11 +56,14 @@ export function AppHeader({
   const displayName = getUserDisplayName(user);
 
   const cartCount = useCartStore((s) => s.totalItems());
+  const setCart = useCartStore((s) => s.setCart);
   const showToast = useUiStore((s) => s.showToast);
   const branches = useBranchesStore((s) => s.branches);
   const selectedBranchId = useBranchesStore((s) => s.selectedBranchId);
   const setBranches = useBranchesStore((s) => s.setBranches);
   const selectBranch = useBranchesStore((s) => s.selectBranch);
+
+  const { data } = useCart();
 
   const {
     data: fetchedBranches = [],
@@ -101,7 +105,8 @@ export function AppHeader({
     if (fetchedBranches.length) {
       setBranches(fetchedBranches);
     }
-  }, [fetchedBranches, setBranches]);
+    setCart(data ?? null);
+  }, [data, setCart, fetchedBranches, setBranches]);
 
   useEffect(() => {
     if (branchesError) {

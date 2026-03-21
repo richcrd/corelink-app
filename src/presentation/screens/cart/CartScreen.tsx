@@ -5,6 +5,7 @@ import {
   Pressable,
   StyleSheet,
   Text,
+  TouchableOpacity,
   useColorScheme,
   View,
 } from "react-native";
@@ -18,6 +19,7 @@ import { Cart, CartItem } from "@/src/features/cart/types/Cart";
 import { formatCurrency } from "../../utils/common";
 import { useCartMutations } from "@/src/features/cart/hooks/useCartMutations";
 import { useUiStore } from "../../stores/ui.store";
+import { Minus, Plus, Trash } from "lucide-react-native";
 
 export default function CartScreen() {
   const colorScheme = useColorScheme();
@@ -68,13 +70,13 @@ export default function CartScreen() {
 
   const items = data?.items ?? [];
 
-  //   if (isLoading) {
-  //     return (
-  //         <View style={[styles.centered, { backgroundColor: theme.background }]}>
-  //             <ActivityIndicator size="large" color={theme.primary} />
-  //         </View>
-  //     )
-  //   }
+  if (isLoading) {
+    return (
+      <View style={[styles.centered, { backgroundColor: theme.background }]}>
+          <ActivityIndicator size="large" color={theme.primary} />
+      </View>
+    )
+  }
 
   if (isError) {
     return (
@@ -141,6 +143,11 @@ export default function CartScreen() {
           />
         )}
       />
+      <TouchableOpacity>
+        <Text>Confirmar Carrito</Text>
+        <Text>{totalItems}</Text>
+        <Text>{formatCurrency(totalPrice)}</Text>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -197,16 +204,13 @@ function CartRow({
           {item.productName}
         </Text>
         <Text style={[styles.productMeta, { color: theme.tabIconDefault }]}>
-          Cantidad: {item.quantity}
+          Unidad: {formatCurrency(item.price)}
         </Text>
-        <Text style={[styles.productMeta, { color: theme.tabIconDefault }]}>
-          Unitario: {formatCurrency(item.price)}
+        <Text style={[styles.productMeta, { color: theme.text, fontWeight: "800", marginTop: 10 }]}>
+          {formatCurrency(item.subtotal)}
         </Text>
       </View>
 
-      <Text style={[styles.lineTotal, { color: theme.text }]}>
-        {formatCurrency(item.subtotal)}
-      </Text>
       <View style={styles.actionsRow}>
         <Pressable
           onPress={onDecrease}
@@ -216,7 +220,7 @@ function CartRow({
             { borderColor: theme.border, opacity: disabled ? 0.6 : 1 },
           ]}
         >
-          <Text style={[styles.qtyBtnText, { color: theme.text }]}>-</Text>
+          <Minus size={14} color={theme.text} />
         </Pressable>
         <Text style={[styles.qtyValue, { color: theme.text }]}>{item.quantity}</Text>
         <Pressable
@@ -227,12 +231,12 @@ function CartRow({
             { borderColor: theme.border, opacity: disabled ? 0.6 : 1 },
           ]}
         >
-          <Text style={[styles.qtyBtnText, { color: theme.text }]}>+</Text>
-        </Pressable>
-        <Pressable onPress={onRemove} disabled={disabled} style={{ marginLeft: 10 }}>
-          <Text style={{ color: theme.primary, fontWeight: "700", fontSize: 12 }}>Eliminar</Text>
+          <Plus size={14} color={theme.text} />
         </Pressable>
       </View>
+      <Pressable onPress={onRemove} disabled={disabled} style={{ position: 'absolute', bottom: 55, right: 15 }}>
+         <Trash color="red" size={14} />
+      </Pressable>
     </View>
   );
 }
@@ -276,16 +280,15 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
   rowCard: {
-    borderWidth: 1,
     borderRadius: 12,
-    padding: 10,
+    padding: 15,
     flexDirection: "row",
     alignItems: "center",
     gap: 10,
   },
   image: {
-    width: 58,
-    height: 58,
+    width: 50,
+    height: 50,
     borderRadius: 8,
     resizeMode: "cover",
   },
@@ -294,18 +297,13 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   productName: {
-    fontSize: 14,
+    fontSize: 12,
     fontWeight: "800",
   },
   productMeta: {
     marginTop: 2,
     fontSize: 12,
     fontWeight: "600",
-  },
-  lineTotal: {
-    fontSize: 13,
-    fontWeight: "900",
-    marginLeft: 8,
   },
   summary: {
     position: "absolute",
@@ -330,7 +328,7 @@ const styles = StyleSheet.create({
     fontWeight: "900",
   },
   actionsRow: {
-    marginTop: 8,
+    marginTop: 35,
     flexDirection: "row",
     alignItems: "center",
   },
@@ -338,13 +336,9 @@ const styles = StyleSheet.create({
     width: 26,
     height: 26,
     borderWidth: 1,
-    borderRadius: 6,
+    borderRadius: 100,
     alignItems: "center",
     justifyContent: "center",
-  },
-  qtyBtnText: {
-    fontSize: 16,
-    fontWeight: "700",
   },
   qtyValue:  {
     marginHorizontal: 10,

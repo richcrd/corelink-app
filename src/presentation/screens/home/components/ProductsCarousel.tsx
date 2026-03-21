@@ -20,7 +20,7 @@ type ProductsCarouselProps = {
   products: ProductDto[];
   loading: boolean;
   theme: Theme;
-  onPressProduct: () => void;
+  onPressProduct: (item: ProductDto) => void | Promise<void>;
 };
 
 export function ProductsCarousel({
@@ -48,7 +48,7 @@ export function ProductsCarousel({
           contentContainerStyle={styles.productsRow}
           renderItem={({ item }) => (
             <Pressable
-              onPress={onPressProduct}
+              onPress={() => onPressProduct(item)}
               style={[
                 styles.productCard,
                 { backgroundColor: theme.card, borderColor: theme.border },
@@ -71,7 +71,7 @@ export function ProductsCarousel({
                 <Text style={[styles.prodName, { color: theme.text }]} numberOfLines={2}>
                   {item.name}
                 </Text>
-                <TouchableOpacity style={[styles.addIcon, { backgroundColor: theme.primary }]} onPress={onPressProduct}>
+                <TouchableOpacity style={[styles.addIcon, { backgroundColor: theme.primary }]} onPress={() => onPressProduct(item)}>
                   <Plus size={20} color={theme.card} />
                 </TouchableOpacity>
                 <Text style={[styles.prodPrice, { color: theme.text }]}>{formatCurrency(item.finalPrice)}</Text>

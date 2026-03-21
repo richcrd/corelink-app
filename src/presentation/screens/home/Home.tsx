@@ -21,6 +21,8 @@ import {
   QuickActionsRow,
   type QuickActionItem,
 } from "@/src/presentation/screens/home/components/QuickActionsRow";
+import { ProductDto } from "@/src/features/products/types/Product";
+import { useCartMutations } from "@/src/features/cart/hooks/useCartMutations";
 
 const BANNER_IMAGE = require("@/assets/images/image_banner_800.webp");
 const MAX_CATEGORIES = 10;
@@ -68,6 +70,8 @@ export default function HomeScreen() {
     error: categoriesError,
   } = useCategories();
 
+  const { addItem, isAddingItem } = useCartMutations();
+
   const displayedCategories = categories.slice(0, MAX_CATEGORIES);
   const displayedProducts = products.slice(0, MAX_PRODUCTS);
 
@@ -90,7 +94,16 @@ export default function HomeScreen() {
   }, [categoriesError, showToast]);
 
   function onPressComingSoon() {
-    showToast("Próximamente", "info");
+    showToast("Proximamente", "info");
+  }
+
+  async function addProduct(item: ProductDto) {
+    try {
+      const branchProductId = item.branchProductId;
+      await addItem({ branchProductId, quantity: 1 });
+    } catch (error) {
+      showToast(getErrorMessage(error, "No se pudo agregar al carrito"), "error");
+    }
   }
 
   function onPressCategory(categoryId: number) {
@@ -138,7 +151,7 @@ export default function HomeScreen() {
             products={displayedProducts}
             loading={loadingProducts}
             theme={theme}
-            onPressProduct={onPressComingSoon}
+            onPressProduct={addProduct}
           />
         )}
 

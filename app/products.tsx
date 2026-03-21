@@ -1,5 +1,5 @@
 import { Stack, useLocalSearchParams } from "expo-router";
-import ProductsView from "@/src/presentation/screens/products/productsView/productsView";
+import ProductsView from "@/src/presentation/screens/products/productsView";
 import { AppHeader } from "@/src/presentation/components/AppHeader";
 
 export default function ProductsScreen() {

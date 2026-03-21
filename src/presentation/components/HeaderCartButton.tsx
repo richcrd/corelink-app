@@ -21,7 +21,6 @@ export function HeaderCartButton({
   const theme = Colors[colorScheme ?? "light"];
   const countFromStore = useCartStore((s) => s.totalItems());
   const count = countOverride ?? countFromStore;
-  const showToast = useUiStore((s) => s.showToast);
 
   function handlePress() {
     if (onPress) return onPress();
@@ -34,10 +33,7 @@ export function HeaderCartButton({
     variant === "onPrimary" ? (isDark ? theme.background : theme.textOnPrimary) : theme.text;
 
   const badgeBackgroundColor =
-    variant === "onPrimary" ? (isDark ? theme.background : theme.card) : theme.primary;
-
-  const badgeTextColor =
-    variant === "onPrimary" ? (isDark ? theme.textOnPrimary : theme.primary) : theme.textOnPrimary;
+    variant === "onPrimary" ? (isDark ? theme.danger : theme.danger) : theme.primary;
 
   return (
     <Pressable
@@ -46,8 +42,8 @@ export function HeaderCartButton({
     >
       <FontAwesome name="shopping-cart" size={22} color={iconColor} />
       {count > 0 ? (
-        <View style={[styles.badge, { backgroundColor: badgeBackgroundColor }]}>
-          <Text style={[styles.badgeText, { color: badgeTextColor }]}>
+        <View style={[styles.badge, { backgroundColor: badgeBackgroundColor, borderColor: theme.primary }]}>
+          <Text style={[styles.badgeText, { color: theme.textOnPrimary }]}>
             {count}
           </Text>
         </View>
@@ -63,14 +59,14 @@ const styles = StyleSheet.create({
   },
   badge: {
     position: "absolute",
-    right: 2,
-    top: 2,
+    right: 0,
+    top: 0,
     minWidth: 16,
     height: 16,
-    borderRadius: 8,
+    borderRadius: 12,
     alignItems: "center",
     justifyContent: "center",
-    paddingHorizontal: 4,
+    paddingHorizontal: 3,
   },
   badgeText: {
     fontSize: 10,

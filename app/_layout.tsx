@@ -70,7 +70,6 @@ function RootLayoutNav() {
         <BottomSheetModalProvider>
           <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
             <AuthRedirect />
-            <Loading />
             <ScreenLoading />
             <Stack screenOptions={{ headerShown: false }}>
             </Stack>
