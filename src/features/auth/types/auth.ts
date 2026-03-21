@@ -19,11 +19,15 @@ export type RegisterBody = {
 
 export type AuthSession = {
   token: string;
+  refreshToken: string;
   user: User;
 };
 
 export type AuthResponseDto = {
   accessToken: string;
+  accessTokenExpiresAt: string;
+  refreshToken: string;
+  refreshTokenExpiresAt: string;
   userId: string;
   personId: string;
   username: string;

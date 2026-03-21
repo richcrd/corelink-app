@@ -9,6 +9,7 @@ import type {
 function mapToSession(dto: AuthResponseDto): AuthSession {
   return {
     token: dto.accessToken,
+    refreshToken: dto.refreshToken,
     user: {
       id: dto.userId,
       personId: dto.personId,

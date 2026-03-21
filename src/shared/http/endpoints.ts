@@ -8,6 +8,7 @@ export const ENDPOINTS = {
   auth: {
     login: `${AUTH_BASE}/login`,
     register: `${AUTH_BASE}/register`,
+    refresh: `${AUTH_BASE}/refresh`,
   },
 
   productCategory: {
