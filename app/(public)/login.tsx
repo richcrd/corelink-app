@@ -6,7 +6,7 @@ import Colors from "@/src/presentation/constants/Colors";
 import { useColorScheme } from "@/src/presentation/hooks/useColorScheme";
 import { useAuth } from "@/src/features/auth/hooks/useAuth";
 import { useUiStore } from "@/src/presentation/stores/ui.store";
-import { getErrorMessage } from "@/src/presentation/feedback/getErrorMessage";
+import { getErrorMessage } from "@/src/presentation/feedback/ToastViewport";
 import { AuthScreenLayout } from "@/src/presentation/screens/auth/components/AuthScreenLayout";
 import {
   AuthTextField,

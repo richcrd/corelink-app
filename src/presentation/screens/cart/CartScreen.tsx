@@ -14,7 +14,7 @@ import Colors from "../../constants/Colors";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useCart } from "@/src/features/cart/hooks/useCart";
 import { useCartStore } from "@/src/features/cart/store/cartStore";
-import { getErrorMessage } from "../../feedback/getErrorMessage";
+import { getErrorMessage } from "../../feedback/ToastViewport";
 import { Cart, CartItem } from "@/src/features/cart/types/Cart";
 import { formatCurrency } from "../../utils/common";
 import { useCartMutations } from "@/src/features/cart/hooks/useCartMutations";
@@ -62,6 +62,10 @@ export default function CartScreen() {
     } catch (e) {
       showToast(getErrorMessage(e, "No se pudo eliminar"), "error");
     }
+  }
+
+  function onPressConfirm() {
+    showToast("Ir a pagar", "success");
   }
 
   useEffect(() => {
@@ -121,7 +125,7 @@ export default function CartScreen() {
   }
 
   return (
-    <View>
+    <View style={[styles.root, { backgroundColor: theme.card }]}>
       <FlatList
         data={items}
         keyExtractor={(item) => String(item.id)}
@@ -143,11 +147,27 @@ export default function CartScreen() {
           />
         )}
       />
-      <TouchableOpacity>
-        <Text>Confirmar Carrito</Text>
-        <Text>{totalItems}</Text>
-        <Text>{formatCurrency(totalPrice)}</Text>
-      </TouchableOpacity>
+      <View
+        style={[
+          styles.footer,
+          {
+            backgroundColor: theme.card,
+            borderTopColor: theme.border,
+            paddingBottom: 12 + insets.bottom,
+          },
+        ]}
+      >
+        <View style={{ flexDirection: 'row', width: '90%', justifyContent: 'space-between', marginVertical: 10 }}>
+          <Text>Items: {totalItems}</Text>
+          <Text style={{ color: theme.text, fontWeight: '800', fontSize: 16 }}>{formatCurrency(totalPrice)}</Text>
+        </View>
+        <TouchableOpacity
+          style={[styles.confirmBtn, { backgroundColor: theme.primary }]}
+          onPress={() => onPressConfirm()}
+        >
+          <Text style={{ color: theme.textOnPrimary, fontWeight: '600' }}>Confirmar Carrito</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }
@@ -171,7 +191,7 @@ function CartRow({
     <View
       style={[
         styles.rowCard,
-        { backgroundColor: theme.card, borderColor: theme.border },
+        { borderColor: theme.border },
       ]}
     >
       {item.imageUrl ? (
@@ -285,6 +305,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 10,
+    borderBottomWidth: 0.7
   },
   image: {
     width: 50,
@@ -347,4 +368,22 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: "700",
   },
+  confirmBtn: {
+    width: '90%',
+    paddingVertical: 15,
+    alignItems: 'center',
+    borderRadius: 100,
+    marginTop: 5,
+  },
+  footer: {
+    left: 0,
+    right: 0,
+    bottom: 0,
+    paddingTop: 12,
+    paddingHorizontal: 16,
+    borderTopWidth: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    position: 'absolute',
+  }
 });

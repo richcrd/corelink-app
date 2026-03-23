@@ -12,7 +12,7 @@ import { useColorScheme } from "@/src/presentation/hooks/useColorScheme";
 import { useUiStore } from "../../stores/ui.store";
 import { useCategories } from "@/src/features/categories/hooks/useCategories";
 import { useProducts } from "@/src/features/products/hooks/useProducts";
-import { getErrorMessage } from "@/src/presentation/feedback/getErrorMessage";
+import { getErrorMessage } from "@/src/presentation/feedback/ToastViewport";
 import { CategoriesCarousel } from "./components/CategoriesCarousel";
 import { ProductsCarousel } from "./components/ProductsCarousel";
 import { useBranchesStore } from "@/src/features/branches/store/Branches.store";

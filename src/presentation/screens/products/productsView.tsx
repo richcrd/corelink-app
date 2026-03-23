@@ -9,7 +9,7 @@ import { Plus } from "lucide-react-native";
 import { ProductDto } from "@/src/features/products/types/Product";
 import { useCartMutations } from "@/src/features/cart/hooks/useCartMutations";
 import { useUiStore } from "@/src/presentation/stores/ui.store";
-import { getErrorMessage } from "@/src/presentation/feedback/getErrorMessage";
+import { getErrorMessage } from "@/src/presentation/feedback/ToastViewport";
 
 interface ProductsViewProps {
   categoryId?: string;

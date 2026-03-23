@@ -5,6 +5,9 @@ import Colors from "@/src/presentation/constants/Colors";
 import { useColorScheme } from "@/src/presentation/hooks/useColorScheme";
 import { useUiStore } from "../stores/ui.store";
 
+export const getErrorMessage = (e: any, fallback?: string): string => 
+  e?.response?.data?.Message || e?.response?.data?.message || fallback || "Error";
+
 export function ToastViewport() {
   const toast = useUiStore((s) => s.toast);
   const { bottom } = useSafeAreaInsets();
@@ -42,7 +45,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     left: 0,
     right: 0,
-    bottom: 0,
+    bottom: 80,
     alignItems: "center",
     zIndex: 9999,
   },

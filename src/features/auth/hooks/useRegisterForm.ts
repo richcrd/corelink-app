@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { useRouter } from "expo-router";
 import { useAuth } from "../hooks/useAuth";
 import { useUiStore } from "@/src/presentation/stores/ui.store";
-import { getErrorMessage } from "@/src/presentation/feedback/getErrorMessage";
+import { getErrorMessage } from "@/src/presentation/feedback/ToastViewport";
 
 type RegisterFormState = {
   username: string;

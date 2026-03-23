@@ -13,7 +13,7 @@ import { useCartStore } from "@/src/features/cart/store/cartStore";
 import { useBranches } from "@/src/features/branches/hooks/useBranches";
 import { DEFAULT_DEPARTMENT_ID } from "@/src/features/branches/constants";
 import { useBranchesStore } from "@/src/features/branches/store/Branches.store";
-import { getErrorMessage } from "@/src/presentation/feedback/getErrorMessage";
+import { getErrorMessage } from "@/src/presentation/feedback/ToastViewport";
 import { Select } from "@/src/presentation/components/Select";
 
 import { getUserDisplayName } from "@/src/features/auth/types/user";
