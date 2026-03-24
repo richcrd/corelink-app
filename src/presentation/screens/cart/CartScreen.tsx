@@ -10,6 +10,7 @@ import {
   View,
 } from "react-native";
 import React, { useEffect } from "react";
+import { useRouter } from "expo-router";
 import Colors from "../../constants/Colors";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useCart } from "@/src/features/cart/hooks/useCart";
@@ -20,13 +21,16 @@ import { formatCurrency } from "../../utils/common";
 import { useCartMutations } from "@/src/features/cart/hooks/useCartMutations";
 import { useUiStore } from "../../stores/ui.store";
 import { Minus, Plus, Trash } from "lucide-react-native";
+import { useCheckout } from "@/src/features/checkout/hooks/useCheckout";
 
 export default function CartScreen() {
   const colorScheme = useColorScheme();
   const theme = Colors[colorScheme ?? "light"];
   const insets = useSafeAreaInsets();
+  const router = useRouter();
 
-  const { data, isLoading, isError, error, refetch, isFetching } = useCart();
+  const { data, isPending, isError, error, refetch, isFetching } = useCart();
+  const { validateCart, isValidating } = useCheckout();
 
   const setCart = useCartStore((s) => s.setCart);
   const totalItems = useCartStore((s) => s.totalItems());
@@ -64,8 +68,18 @@ export default function CartScreen() {
     }
   }
 
-  function onPressConfirm() {
-    showToast("Ir a pagar", "success");
+  async function onPressConfirm() {
+    try {
+      const response = await validateCart();
+      if (response?.isValid) {
+        router.push("/checkout");
+      } else {
+        const errorMsg = response?.errors?.join(", ") || "El carrito no es válido.";
+        showToast(errorMsg, "error");
+      }
+    } catch (e) {
+      showToast(getErrorMessage(e, "Error al validar el carrito"), "error");
+    }
   }
 
   useEffect(() => {
@@ -74,7 +88,7 @@ export default function CartScreen() {
 
   const items = data?.items ?? [];
 
-  if (isLoading) {
+  if (isPending) {
     return (
       <View style={[styles.centered, { backgroundColor: theme.background }]}>
           <ActivityIndicator size="large" color={theme.primary} />
@@ -162,10 +176,15 @@ export default function CartScreen() {
           <Text style={{ color: theme.text, fontWeight: '800', fontSize: 16 }}>{formatCurrency(totalPrice)}</Text>
         </View>
         <TouchableOpacity
-          style={[styles.confirmBtn, { backgroundColor: theme.primary }]}
+          style={[styles.confirmBtn, { backgroundColor: isValidating ? theme.primaryMuted : theme.primary }]}
           onPress={() => onPressConfirm()}
+          disabled={isValidating}
         >
-          <Text style={{ color: theme.textOnPrimary, fontWeight: '600' }}>Confirmar Carrito</Text>
+          {isValidating ? (
+             <ActivityIndicator color={theme.textOnPrimary} size="small" />
+          ) : (
+            <Text style={{ color: theme.textOnPrimary, fontWeight: '600' }}>Confirmar Carrito</Text>
+          )}
         </TouchableOpacity>
       </View>
     </View>
@@ -235,6 +254,7 @@ function CartRow({
         <Pressable
           onPress={onDecrease}
           disabled={disabled}
+          hitSlop={{ top: 15, bottom: 15, left: 15, right: 15 }}
           style={[
             styles.qtyBtn,
             { borderColor: theme.border, opacity: disabled ? 0.6 : 1 },
@@ -246,6 +266,7 @@ function CartRow({
         <Pressable
           onPress={onIncrease}
           disabled={disabled}
+          hitSlop={{ top: 15, bottom: 15, left: 15, right: 15 }}
           style={[
             styles.qtyBtn,
             { borderColor: theme.border, opacity: disabled ? 0.6 : 1 },
@@ -254,7 +275,12 @@ function CartRow({
           <Plus size={14} color={theme.text} />
         </Pressable>
       </View>
-      <Pressable onPress={onRemove} disabled={disabled} style={{ position: 'absolute', bottom: 55, right: 15 }}>
+      <Pressable 
+        onPress={onRemove} 
+        disabled={disabled} 
+        hitSlop={{ top: 15, bottom: 15, left: 15, right: 15 }}
+        style={{ position: 'absolute', bottom: 55, right: 15 }}
+      >
          <Trash color="red" size={14} />
       </Pressable>
     </View>

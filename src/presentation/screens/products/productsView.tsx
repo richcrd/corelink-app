@@ -30,7 +30,7 @@ const ProductsView = ({ categoryId }: ProductsViewProps) => {
 
   const {
     data,
-    isLoading,
+    isPending,
     isError,
     fetchNextPage,
     hasNextPage,
@@ -61,7 +61,7 @@ const ProductsView = ({ categoryId }: ProductsViewProps) => {
   }
 
   const renderItem = ({ item }: { item: ProductDto }) => (
-    <Pressable
+    <View
       style={[
         styles.productCard,
         { backgroundColor: theme.card, borderColor: theme.border },
@@ -86,21 +86,22 @@ const ProductsView = ({ categoryId }: ProductsViewProps) => {
         <Text style={[styles.prodName, { color: theme.text }]} numberOfLines={2}>
           {item.name}
         </Text>
-        <TouchableOpacity 
-          style={[styles.addIcon, { backgroundColor: theme.primary, opacity: isAddingItem ? 0.6 : 1 }]}
-          onPress={() => onPressAdd(item)}
-          disabled={isAddingItem}
-        >
-          <Plus size={16} color={theme.card} />
-        </TouchableOpacity>
         <Text style={[styles.prodPrice, { color: theme.text }]}>
           {formatCurrency(item.finalPrice)}
         </Text>
+        <TouchableOpacity 
+          style={[styles.addIcon, { backgroundColor: theme.primary, opacity: isAddingItem ? 0.6 : 1, zIndex: 10, elevation: 10 }]}
+          onPress={() => onPressAdd(item)}
+          disabled={isAddingItem}
+          hitSlop={{ top: 15, bottom: 15, left: 15, right: 15 }}
+        >
+          <Plus size={16} color={theme.card} />
+        </TouchableOpacity>
       </View>
-    </Pressable>
+    </View>
   );
 
-  if (isLoading) {
+  if (isPending) {
     return (
       <View style={[styles.centered, { backgroundColor: theme.background }]}>
         <ActivityIndicator size="large" color={theme.primary} />
@@ -174,6 +175,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     overflow: "hidden",
     borderWidth: 1,
+    height: 170,
   },
   prodImage: {
     width: "100%",
@@ -196,6 +198,7 @@ const styles = StyleSheet.create({
   prodPrice: {
     fontSize: 12,
     fontWeight: "700",
+    marginTop: 20,
   },
   prodName: {
     marginTop: 4,
@@ -206,10 +209,10 @@ const styles = StyleSheet.create({
   },
   addIcon: {
     position: "absolute",
-    top: 30,
+    top: 55,
     right: 6,
     borderRadius: 100,
-    padding: 3,
+    padding: 6,
   },
   footerLoader: {
     paddingVertical: 16,

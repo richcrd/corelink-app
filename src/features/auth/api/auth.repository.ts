@@ -1,6 +1,6 @@
 import axios from "axios";
 import { post } from "@/src/shared/http/http";
-import { ENDPOINTS } from "@/src/shared/http/endpoints";
+import { requests } from "@/src/shared/http/endpoints";
 import { ENV } from "@/src/config/env";
 import { isApiResponse } from "@/src/shared/http/types";
 import type {
@@ -23,13 +23,13 @@ const plainAxios = axios.create({
 
 export const authRepository = {
   login: (body: LoginCredentials) =>
-    post<LoginCredentials, AuthResponseDto>(ENDPOINTS.auth.login, body),
+    post<LoginCredentials, AuthResponseDto>(requests.auth.login, body),
 
   register: (body: RegisterBody) =>
-    post<RegisterBody, AuthResponseDto>(ENDPOINTS.auth.register, body),
+    post<RegisterBody, AuthResponseDto>(requests.auth.register, body),
 
   async refresh(refreshToken: string): Promise<RefreshResponseDto> {
-    const { data } = await plainAxios.post(ENDPOINTS.auth.refresh, {
+    const { data } = await plainAxios.post(requests.auth.refresh, {
       refreshToken,
     });
     return isApiResponse<RefreshResponseDto>(data) ? data.response : data;

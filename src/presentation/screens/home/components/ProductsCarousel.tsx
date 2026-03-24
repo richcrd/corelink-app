@@ -71,10 +71,14 @@ export function ProductsCarousel({
                 <Text style={[styles.prodName, { color: theme.text }]} numberOfLines={2}>
                   {item.name}
                 </Text>
-                <TouchableOpacity style={[styles.addIcon, { backgroundColor: theme.primary }]} onPress={() => onPressProduct(item)}>
+                <Text style={[styles.prodPrice, { color: theme.text }]}>{formatCurrency(item.finalPrice)}</Text>
+                <TouchableOpacity 
+                  style={[styles.addIcon, { backgroundColor: theme.primary, zIndex: 10, elevation: 10 }]} 
+                  onPress={() => onPressProduct(item)}
+                  hitSlop={{ top: 15, bottom: 15, left: 15, right: 15 }}
+                >
                   <Plus size={20} color={theme.card} />
                 </TouchableOpacity>
-                <Text style={[styles.prodPrice, { color: theme.text }]}>{formatCurrency(item.finalPrice)}</Text>
               </View>
             </Pressable>
           )}
@@ -152,6 +156,6 @@ const styles = StyleSheet.create({
     top: 35,
     right: 10,
     borderRadius: 100,
-    padding: 4,
+    padding: 6,
   }
 });

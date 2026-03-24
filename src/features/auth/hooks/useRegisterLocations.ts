@@ -3,7 +3,7 @@ import { useBranches } from "../../branches/hooks/useBranches";
 import type { SelectOption } from "@/src/presentation/components/Select";
 
 export function useRegisterLocations(departmentId: number) {
-  const { data: locations = [], isLoading, refetch } = useBranches(departmentId);
+  const { data: locations = [], isPending, refetch } = useBranches(departmentId);
 
   const options: SelectOption<number>[] = useMemo(
     () =>
@@ -22,7 +22,7 @@ export function useRegisterLocations(departmentId: number) {
 
   return {
     locationOptions: options,
-    loadingLocations: isLoading,
+    loadingLocations: isPending,
     handleOpen,
   };
 }

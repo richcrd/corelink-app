@@ -67,7 +67,7 @@ export function AppHeader({
 
   const {
     data: fetchedBranches = [],
-    isLoading: loadingBranches,
+    isPending: loadingBranches,
     error: branchesError,
     refetch: refetchBranches,
   } = useBranches(DEFAULT_DEPARTMENT_ID);

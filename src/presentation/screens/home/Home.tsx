@@ -61,7 +61,7 @@ export default function HomeScreen() {
   const itemWidth = (carouselWidth - categoryGap * 3) / 4;
 
   const { data: products = [],
-    isLoading: loadingProducts,
+    isPending: loadingProducts,
     error: productsError,
   } = useProducts(selectedBranchId);
 
