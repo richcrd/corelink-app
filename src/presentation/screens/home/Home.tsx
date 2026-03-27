@@ -11,7 +11,7 @@ import Colors from "@/src/presentation/constants/Colors";
 import { useColorScheme } from "@/src/presentation/hooks/useColorScheme";
 import { useUiStore } from "../../stores/ui.store";
 import { useCategories } from "@/src/features/categories/hooks/useCategories";
-import { useProducts } from "@/src/features/products/hooks/useProducts";
+import { useTopProducts } from "@/src/features/products/hooks/useTopProducts";
 import { getErrorMessage } from "@/src/presentation/feedback/ToastViewport";
 import { CategoriesCarousel } from "./components/CategoriesCarousel";
 import { ProductsCarousel } from "./components/ProductsCarousel";
@@ -63,7 +63,7 @@ export default function HomeScreen() {
   const { data: products = [],
     isPending: loadingProducts,
     error: productsError,
-  } = useProducts(selectedBranchId);
+  } = useTopProducts(selectedBranchId);
 
   const {
     data: categories = [],

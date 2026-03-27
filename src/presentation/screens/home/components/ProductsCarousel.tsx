@@ -156,6 +156,6 @@ const styles = StyleSheet.create({
     top: 35,
     right: 10,
     borderRadius: 100,
-    padding: 6,
+    padding: 3,
   }
 });

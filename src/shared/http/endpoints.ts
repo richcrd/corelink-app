@@ -19,7 +19,9 @@ export const requests = {
     getByBranch: (branchId: number) =>
       `/service/product/branch/${branchId}`,
     getByBranchAndCategory: (branchId: number, categoryId: number, page: number = 1, pageSize: number = 10) =>
-      `/service/product/branch/${branchId}/category/${categoryId}?page=${page}&pageSize=${pageSize}`
+      `/service/product/branch/${branchId}/category/${categoryId}?page=${page}&pageSize=${pageSize}`,
+    getTopWithPrice: (branchId: number) =>
+      `/service/product/branch/${branchId}/top-with-price`,
   },
 
   cart: {
@@ -37,6 +39,11 @@ export const requests = {
 
   paymentMethod: {
     getAll: `/service/paymentmethod`,
+  },
+
+  orders: {
+    getMyOrders: `/service/orders`,
+    getDetails: (orderId: number) => `/service/orders/${orderId}/details`,
   }
 
 } as const;

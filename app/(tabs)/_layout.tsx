@@ -38,7 +38,7 @@ export default function TabLayout() {
         options={{
           title: 'Compras',
           tabBarIcon: ({ color }) => <TabBarIcon name="th-large" color={color} />,
-          header: () => <AppHeader showSearch showCart />,
+          header: () => <AppHeader title="Mis Compras" showSearch={false} showCart />,
         }}
       />
 
