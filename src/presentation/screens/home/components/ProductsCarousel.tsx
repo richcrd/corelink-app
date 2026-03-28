@@ -10,7 +10,7 @@ import {
   View,
 } from "react-native";
 import type Colors from "@/src/presentation/constants/Colors";
-import type { ProductDto } from "@/src/features/products/types/Product";
+import type { ProductDto } from "@/src/features/products";
 import { Plus } from 'lucide-react-native';
 import { formatCurrency } from "@/src/presentation/utils/common";
 

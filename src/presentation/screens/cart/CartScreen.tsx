@@ -13,15 +13,13 @@ import React, { useEffect } from "react";
 import { useRouter } from "expo-router";
 import Colors from "../../constants/Colors";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useCart } from "@/src/features/cart/hooks/useCart";
-import { useCartStore } from "@/src/features/cart/store/cartStore";
+import { useCart, useCartMutations, CartItem } from "@/src/features/cart";
+import { useCartStore } from "@/src/features/store/cart.store";
 import { getErrorMessage } from "../../feedback/ToastViewport";
-import { Cart, CartItem } from "@/src/features/cart/types/Cart";
 import { formatCurrency } from "../../utils/common";
-import { useCartMutations } from "@/src/features/cart/hooks/useCartMutations";
 import { useUiStore } from "../../stores/ui.store";
 import { Minus, Plus, Trash } from "lucide-react-native";
-import { useCheckout } from "@/src/features/checkout/hooks/useCheckout";
+import { useCheckout } from "@/src/features/checkout";
 
 export default function CartScreen() {
   const colorScheme = useColorScheme();

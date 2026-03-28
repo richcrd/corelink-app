@@ -1,13 +1,13 @@
 import { StyleSheet, Text, View, FlatList, ActivityIndicator, Image, Pressable, TouchableOpacity, Dimensions } from "react-native";
 import React, { useMemo } from "react";
-import { useProductsByCategory } from "@/src/features/products/hooks/useProductsByCategory";
-import { useBranchesStore } from "@/src/features/branches/store/Branches.store";
+import { useProductsByCategory } from "@/src/features/products";
+import { useBranchesStore } from "@/src/features/store/branches.store";
 import { useColorScheme } from "@/src/presentation/hooks/useColorScheme";
 import Colors from "@/src/presentation/constants/Colors";
 import { formatCurrency } from "@/src/presentation/utils/common";
 import { Plus } from "lucide-react-native";
-import { ProductDto } from "@/src/features/products/types/Product";
-import { useCartMutations } from "@/src/features/cart/hooks/useCartMutations";
+import { ProductDto } from "@/src/features/products";
+import { useCartMutations } from "@/src/features/cart";
 import { useUiStore } from "@/src/presentation/stores/ui.store";
 import { getErrorMessage } from "@/src/presentation/feedback/ToastViewport";
 

@@ -1,7 +1,6 @@
 import { create } from 'zustand';
 
-import { Cart } from '../types/Cart';
-import { getCartItemsCount, getCartTotal } from '../types/Cart';
+import { Cart, getCartItemsCount, getCartTotal } from '../cart';
 
 type CartStore = {
   cart: Cart | null;

@@ -3,7 +3,7 @@ import { Pressable, StyleSheet, Text, View } from "react-native";
 
 import Colors from "@/src/presentation/constants/Colors";
 import { useColorScheme } from "@/src/presentation/hooks/useColorScheme";
-import { useCartStore } from "@/src/features/cart/store/cartStore";
+import { useCartStore } from "@/src/features/store/cart.store";
 import { useUiStore } from "../stores/ui.store";
 import { useRouter } from "expo-router";
 

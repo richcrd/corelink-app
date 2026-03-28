@@ -10,19 +10,19 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Colors from "@/src/presentation/constants/Colors";
 import { useColorScheme } from "@/src/presentation/hooks/useColorScheme";
 import { useUiStore } from "../../stores/ui.store";
-import { useCategories } from "@/src/features/categories/hooks/useCategories";
-import { useTopProducts } from "@/src/features/products/hooks/useTopProducts";
+import { useCategories } from "@/src/features/categories";
+import { useTopProducts } from "@/src/features/products";
 import { getErrorMessage } from "@/src/presentation/feedback/ToastViewport";
 import { CategoriesCarousel } from "./components/CategoriesCarousel";
 import { ProductsCarousel } from "./components/ProductsCarousel";
-import { useBranchesStore } from "@/src/features/branches/store/Branches.store";
+import { useBranchesStore } from "@/src/features/store/branches.store";
 import { AdsCarousel, type AdItem } from "@/src/presentation/screens/home/components/AdsCarousel";
 import {
   QuickActionsRow,
   type QuickActionItem,
 } from "@/src/presentation/screens/home/components/QuickActionsRow";
-import { ProductDto } from "@/src/features/products/types/Product";
-import { useCartMutations } from "@/src/features/cart/hooks/useCartMutations";
+import { ProductDto } from "@/src/features/products";
+import { useCartMutations } from "@/src/features/cart";
 
 const BANNER_IMAGE = require("@/assets/images/image_banner_800.webp");
 const MAX_CATEGORIES = 10;

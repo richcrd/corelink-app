@@ -8,9 +8,8 @@ import {
 } from "@/src/presentation/screens/auth/components/AuthTextField";
 import { AuthButton } from "@/src/presentation/screens/auth/components/AuthButton";
 import { Select } from "@/src/presentation/components/Select";
-import { useRegisterForm } from "@/src/features/auth/hooks/useRegisterForm";
-import { useRegisterLocations } from "@/src/features/auth/hooks/useRegisterLocations";
-import { DEFAULT_DEPARTMENT_ID } from "@/src/features/branches/constants";
+import { useRegisterForm, useRegisterLocations } from "@/src/features/auth";
+import { DEFAULT_DEPARTMENT_ID } from "@/src/features/branches";
 
 export default function RegisterScreen() {
   const router = useRouter();

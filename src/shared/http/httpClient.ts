@@ -1,7 +1,7 @@
 import axios from "axios";
 import { ENV } from "@/src/config/env";
-import { useAuthStore } from "@/src/features/auth/store/auth.store";
-import { authRepository } from "@/src/features/auth/api/auth.repository";
+import { useAuthStore } from "@/src/features/store/auth.store";
+import { authRepository } from "@/src/features/auth";
 
 export const api = axios.create({
   baseURL: ENV.API_BASE_URL,

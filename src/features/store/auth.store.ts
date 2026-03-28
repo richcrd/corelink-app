@@ -1,6 +1,5 @@
 import { create } from "zustand";
-import { User } from "../types/user";
-import type { AuthSession } from "../types/auth";
+import { User, AuthSession } from "../auth";
 import { secureStore } from "@/src/shared/storage/secureJson";
 import { STORAGE_KEYS } from "@/src/shared/storage/storageKeys";
 

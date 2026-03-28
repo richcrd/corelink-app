@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import type { BranchDto } from "../types/Branch";
+import type { BranchDto } from "../branches";
 
 type BranchesStore = {
   branches: BranchDto[];

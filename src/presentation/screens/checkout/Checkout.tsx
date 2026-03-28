@@ -4,10 +4,9 @@ import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { CheckCircle2, Circle, Plus, Lock, CreditCard, CreditCardIcon } from "lucide-react-native";
 import Colors from "../../constants/Colors";
-import { useCart } from "@/src/features/cart/hooks/useCart";
-import { useCartStore } from "@/src/features/cart/store/cartStore";
-import { usePaymentMethods } from "@/src/features/checkout/hooks/usePaymentMethods";
-import { useCheckout } from "@/src/features/checkout/hooks/useCheckout";
+import { useCart, useCartMutations } from "@/src/features/cart";
+import { useCartStore } from "@/src/features/store/cart.store";
+import { usePaymentMethods, useCheckout } from "@/src/features/checkout";
 import { useUiStore } from "../../stores/ui.store";
 import { formatCurrency } from "../../utils/common";
 import { getErrorMessage } from "../../feedback/ToastViewport";
@@ -24,11 +23,13 @@ export default function CheckoutScreen() {
   const items = cartData?.items || [];
   const totalPrice = useCartStore((s) => s.totalPrice());
   const totalItems = useCartStore((s) => s.totalItems());
+  const clearCartStore = useCartStore((s) => s.clear);
 
   const { data: paymentMethodsData, isPending: isLoadingPayments } = usePaymentMethods();
   const [selectedPayment, setSelectedPayment] = useState<number | null>(null);
 
   const { processCheckout, isProcessing } = useCheckout();
+  const { clearCart } = useCartMutations();
   const showToast = useUiStore((s) => s.showToast);
 
   React.useEffect(() => {
@@ -48,6 +49,8 @@ export default function CheckoutScreen() {
       });
 
       if (response && response.orderId) {
+        await clearCart();
+        clearCartStore();
         showToast("¡Orden procesada exitosamente!", "success");
         router.replace("/"); // home or success screen
       } else {

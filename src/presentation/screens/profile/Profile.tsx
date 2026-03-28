@@ -3,9 +3,9 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import Colors from '@/src/presentation/constants/Colors';
 import { useColorScheme } from '@/src/presentation/hooks/useColorScheme';
-import { useAuthStore } from '@/src/features/auth/store/auth.store';
+import { useAuthStore } from '@/src/features/store/auth.store';
 import { useUiStore } from '@/src/presentation/stores/ui.store';
-import { getUserDisplayName } from '@/src/features/auth/types/user';
+import { getUserDisplayName } from '@/src/features/auth';
 
 export default function ProfileScreen() {
   const router = useRouter();

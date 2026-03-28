@@ -4,7 +4,7 @@ import { Pressable, StyleSheet, Text } from "react-native";
 
 import Colors from "@/src/presentation/constants/Colors";
 import { useColorScheme } from "@/src/presentation/hooks/useColorScheme";
-import { useAuth } from "@/src/features/auth/hooks/useAuth";
+import { useAuth } from "@/src/features/auth";
 import { useUiStore } from "@/src/presentation/stores/ui.store";
 import { getErrorMessage } from "@/src/presentation/feedback/ToastViewport";
 import { AuthScreenLayout } from "@/src/presentation/screens/auth/components/AuthScreenLayout";

@@ -1,7 +1,7 @@
 import React from "react";
 import { FlatList, Image, Pressable, StyleSheet, Text, View } from "react-native";
 import type Colors from "@/src/presentation/constants/Colors";
-import type { ProductCategoryDto } from "@/src/features/categories/types/Category";
+import type { ProductCategoryDto } from "@/src/features/categories";
 
 type Theme = typeof Colors.light;
 

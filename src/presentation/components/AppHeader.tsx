@@ -8,18 +8,17 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Colors from "@/src/presentation/constants/Colors";
 import { useColorScheme } from "@/src/presentation/hooks/useColorScheme";
 import { useUiStore } from "../stores/ui.store";
-import { useAuthStore } from "@/src/features/auth/store/auth.store";
-import { useCartStore } from "@/src/features/cart/store/cartStore";
-import { useBranches } from "@/src/features/branches/hooks/useBranches";
-import { DEFAULT_DEPARTMENT_ID } from "@/src/features/branches/constants";
-import { useBranchesStore } from "@/src/features/branches/store/Branches.store";
+import { useAuthStore } from "@/src/features/store/auth.store";
+import { useCartStore } from "@/src/features/store/cart.store";
+import { useBranches, DEFAULT_DEPARTMENT_ID } from "@/src/features/branches";
+import { useBranchesStore } from "@/src/features/store/branches.store";
 import { getErrorMessage } from "@/src/presentation/feedback/ToastViewport";
 import { Select } from "@/src/presentation/components/Select";
 
-import { getUserDisplayName } from "@/src/features/auth/types/user";
+import { getUserDisplayName } from "@/src/features/auth";
 
 import { HeaderCartButton } from "@/src/presentation/components/HeaderCartButton";
-import { useCart } from "@/src/features/cart/hooks/useCart";
+import { useCart } from "@/src/features/cart";
 
 export type AppHeaderProps = {
   variant?: "default" | "page";

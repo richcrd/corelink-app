@@ -11,8 +11,7 @@ import Colors from "../../constants/Colors";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useColorScheme } from "@/src/presentation/hooks/useColorScheme";
 import { formatCurrency } from "../../utils/common";
-import { useOrderDetails } from "@/src/features/orders/hooks/useOrderDetails";
-import { OrderItem } from "@/src/features/orders/types/Order";
+import { useOrderDetails, OrderItem } from "@/src/features/orders";
 import { getErrorMessage } from "../../feedback/ToastViewport";
 
 export default function OrderDetailScreen({ id }: { id: string }) {

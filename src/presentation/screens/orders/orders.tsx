@@ -10,7 +10,7 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Colors from "@/src/presentation/constants/Colors";
 import { useColorScheme } from "@/src/presentation/hooks/useColorScheme";
-import { useOrders } from "@/src/features/orders/hooks/useOrders";
+import { useOrders } from "@/src/features/orders";
 import { useRouter } from "expo-router";
 import { formatCurrency } from "../../utils/common";
 import Feather from "@expo/vector-icons/Feather";
