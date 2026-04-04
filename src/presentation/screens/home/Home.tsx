@@ -1,11 +1,6 @@
 import React, { useEffect } from "react";
 import { router } from "expo-router";
-import {
-  ScrollView,
-  StyleSheet,
-  useWindowDimensions,
-  View,
-} from "react-native";
+import { ScrollView, StyleSheet, useWindowDimensions, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Colors from "@/src/presentation/constants/Colors";
 import { useColorScheme } from "@/src/presentation/hooks/useColorScheme";
@@ -16,32 +11,14 @@ import { getErrorMessage } from "@/src/presentation/feedback/ToastViewport";
 import { CategoriesCarousel } from "./components/CategoriesCarousel";
 import { ProductsCarousel } from "./components/ProductsCarousel";
 import { useBranchesStore } from "@/src/features/store/branches.store";
-import { AdsCarousel, type AdItem } from "@/src/presentation/screens/home/components/AdsCarousel";
-import {
-  QuickActionsRow,
-  type QuickActionItem,
-} from "@/src/presentation/screens/home/components/QuickActionsRow";
+import { AdsCarousel } from "@/src/presentation/screens/home/components/AdsCarousel";
+import { QuickActionsRow, type QuickActionItem } from "@/src/presentation/screens/home/components/QuickActionsRow";
 import { ProductDto } from "@/src/features/products";
 import { useCartMutations } from "@/src/features/cart";
+import { useBanners } from "@/src/features/banners";
 
-const BANNER_IMAGE = require("@/assets/images/image_banner_800.webp");
 const MAX_CATEGORIES = 10;
 const MAX_PRODUCTS = 8;
-
-const ADS: AdItem[] = [
-  {
-    id: "ad-1",
-    image: BANNER_IMAGE,
-  },
-  {
-    id: "ad-2",
-    image: BANNER_IMAGE,
-  },
-  {
-    id: "ad-3",
-    image: BANNER_IMAGE,
-  },
-];
 
 const QUICK_ACTIONS: QuickActionItem[] = [
   { id: "qa-1", title: "Promociones", subtitle: "Ver descuentos activos" },
@@ -60,15 +37,11 @@ export default function HomeScreen() {
   const categoryGap = 12;
   const itemWidth = (carouselWidth - categoryGap * 3) / 4;
 
-  const { data: products = [],
-    isPending: loadingProducts,
-    error: productsError,
-  } = useTopProducts(selectedBranchId);
+  const { data: products = [], isPending: loadingProducts, error: productsError } = useTopProducts(selectedBranchId);
 
-  const {
-    data: categories = [],
-    error: categoriesError,
-  } = useCategories();
+  const { data: categories = [], error: categoriesError } = useCategories();
+
+  const { data: banners = [], error: bannersError } = useBanners();
 
   const { addItem, isAddingItem } = useCartMutations();
 
@@ -93,6 +66,12 @@ export default function HomeScreen() {
     }
   }, [categoriesError, showToast]);
 
+  useEffect(() => {
+    if (bannersError) {
+      showToast(getErrorMessage(bannersError, "Error al cargar los banners"), "error");
+    }
+  })
+
   function onPressComingSoon() {
     showToast("Proximamente", "info");
   }
@@ -113,10 +92,6 @@ export default function HomeScreen() {
     });
   }
 
-  function onPressAd(ad: AdItem) {
-    showToast('Anuncio', "info");
-  }
-
   function onPressAction(action: QuickActionItem) {
     showToast(action.title, "info");
   }
@@ -127,7 +102,7 @@ export default function HomeScreen() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 24 + insets.bottom }}
       >
-        <AdsCarousel ads={ADS} width={width} theme={theme} onPressAd={onPressAd} />
+        <AdsCarousel data={banners} width={width} theme={theme} />
 
         <QuickActionsRow
           actions={QUICK_ACTIONS}

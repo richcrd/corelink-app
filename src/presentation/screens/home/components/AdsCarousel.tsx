@@ -10,32 +10,28 @@ import {
   type NativeSyntheticEvent,
 } from "react-native";
 import type Colors from "@/src/presentation/constants/Colors";
+import { Banner } from "@/src/features/banners";
+import { toPx, getComponentPixelSize } from "@/src/presentation/utils/common";
 
 type Theme = typeof Colors.light;
 
-export type AdItem = {
-  id: string;
-  image: number;
-};
-
 type AdsCarouselProps = {
-  ads: AdItem[];
+  data: Banner[];
   width: number;
   theme: Theme;
-  onPressAd: (ad: AdItem) => void;
 };
 
-export function AdsCarousel({ ads, width, theme, onPressAd }: AdsCarouselProps) {
-  const listRef = useRef<FlatList<AdItem>>(null);
+export function AdsCarousel({ data, width, theme }: AdsCarouselProps) {
+  const listRef = useRef<FlatList<Banner>>(null);
   const displayIndexRef = useRef(0);
   const isDraggingRef = useRef(false);
   const isMomentumRef = useRef(false);
   const [activeIndex, setActiveIndex] = useState(0);
   const bannerWidth = width;
-  const displayAds = ads.length > 1 ? [...ads, ads[0]] : ads;
+  const displayAds = data.length > 1 ? [...data, data[0]] : data;
 
   useEffect(() => {
-    if (ads.length <= 1) {
+    if (data.length <= 1) {
       return;
     }
 
@@ -54,7 +50,7 @@ export function AdsCarousel({ ads, width, theme, onPressAd }: AdsCarouselProps) 
     scheduleNext();
 
     return () => clearTimeout(timeoutId);
-  }, [ads.length]);
+  }, [data.length]);
 
   function onScrollEnd(event: NativeSyntheticEvent<NativeScrollEvent>) {
     isMomentumRef.current = false;
@@ -63,7 +59,7 @@ export function AdsCarousel({ ads, width, theme, onPressAd }: AdsCarouselProps) 
     const displayIndex = Math.round(offsetX / bannerWidth);
     displayIndexRef.current = displayIndex;
 
-    if (ads.length > 1 && displayIndex === ads.length) {
+    if (data.length > 1 && displayIndex === data.length) {
       displayIndexRef.current = 0;
       setActiveIndex(0);
       listRef.current?.scrollToIndex({ index: 0, animated: false });
@@ -96,7 +92,6 @@ export function AdsCarousel({ ads, width, theme, onPressAd }: AdsCarouselProps) 
         onMomentumScrollEnd={onScrollEnd}
         renderItem={({ item }) => (
           <Pressable
-            onPress={() => onPressAd(item)}
             style={({ pressed }) => [
               styles.cardWrap,
               {
@@ -105,13 +100,22 @@ export function AdsCarousel({ ads, width, theme, onPressAd }: AdsCarouselProps) 
               },
             ]}
           >
-            <ImageBackground source={item.image} imageStyle={styles.image} style={styles.card} />
+            <ImageBackground 
+              source={{ uri: item.imageUrl }} 
+              imageStyle={styles.image} 
+              style={styles.card}  
+              onLayout={() => {
+                const widthPx = toPx(width);
+                const heightPx = toPx(160);
+                // console.log({ widthPx, heightPx });
+              }}
+            />
           </Pressable>
         )}
       />
 
       <View style={styles.dotsRow}>
-        {ads.map((ad, index) => (
+        {data.map((ad, index) => (
           <View
             key={ad.id}
             style={[

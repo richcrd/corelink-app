@@ -5,6 +5,10 @@ export const requests = {
     refresh: `/service/auth/refresh`,
   },
 
+  banners: {
+    getBanners: `/service/banners`,
+  },
+
   productCategory: {
     getAll: `/service/product-category`,
     getById: (id: number) => `/service/product-category/${id}`,
@@ -44,6 +48,6 @@ export const requests = {
   orders: {
     getMyOrders: `/service/orders`,
     getDetails: (orderId: number) => `/service/orders/${orderId}/details`,
-  }
+  },
 
 } as const;
